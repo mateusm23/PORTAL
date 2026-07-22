@@ -32,7 +32,7 @@ export default function AppShell({
   email?: string;
 }) {
   return (
-    <div className="flex min-h-full flex-1 bg-slate-50">
+    <div className="flex h-screen flex-1 overflow-hidden bg-slate-50">
       <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 bg-white">
         <div className="flex h-14 items-center gap-2.5 border-b border-slate-200 px-5">
           <LogoMark className="h-7 w-7" />
