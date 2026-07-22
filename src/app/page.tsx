@@ -104,7 +104,7 @@ export default function Home() {
       </main>
 
       <footer className="mx-auto w-full max-w-5xl px-6 py-8 text-xs text-slate-400 dark:text-slate-600">
-        Uso interno — TRINUS Participações
+        Projeto pessoal — Mateus Monteiro
       </footer>
     </div>
   );
