@@ -18,9 +18,9 @@ const TIPO_LABEL: Record<Obra["tipo"], string> = {
 };
 
 const ESCOPO_SECOES: Array<{ chave: Obra["escopo"]; titulo: string }> = [
+  { chave: "administracao", titulo: "Administração" },
   { chave: "construcao", titulo: "Construção" },
   { chave: "gerenciamento", titulo: "Gerenciamento" },
-  { chave: "administracao", titulo: "Administração" },
 ];
 
 const STATUS: Record<Obra["status"], { label: string; dot: string; text: string }> = {
@@ -44,6 +44,15 @@ function IconObra({ className }: { className?: string }) {
       <path d="M4 21h16" />
       <path d="M9 21v-6h6v6" />
     </svg>
+  );
+}
+
+function CardContador({ label, valor }: { label: string; valor: number }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
+      <p className="text-xs font-medium text-slate-500">{label}</p>
+      <p className="mt-0.5 text-xl font-semibold text-slate-900">{valor}</p>
+    </div>
   );
 }
 
@@ -98,6 +107,17 @@ export default async function PainelPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-10">
+          <div className="flex flex-wrap gap-3">
+            <CardContador label="Total de obras" valor={obras.length} />
+            {ESCOPO_SECOES.map((secao) => (
+              <CardContador
+                key={secao.chave}
+                label={secao.titulo}
+                valor={obras.filter((o) => o.escopo === secao.chave).length}
+              />
+            ))}
+          </div>
+
           {ESCOPO_SECOES.map((secao) => {
             const obrasDaSecao = obras.filter((o) => o.escopo === secao.chave);
             if (obrasDaSecao.length === 0) return null;
