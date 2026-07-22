@@ -3,16 +3,16 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function entrar(email: string, senha: string) {
+export async function cadastrar(email: string, senha: string) {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signUp({
     email,
     password: senha,
   });
 
   if (error) {
-    return { erro: "Email ou senha incorretos." };
+    return { erro: error.message };
   }
 
   redirect("/painel");

@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState, useTransition, type FormEvent } from "react";
-import { entrar } from "./actions";
+import { cadastrar } from "./actions";
 
-export default function LoginForm() {
+export default function CadastroForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
@@ -14,8 +14,13 @@ export default function LoginForm() {
     event.preventDefault();
     setErro(null);
 
+    if (senha.length < 6) {
+      setErro("A senha precisa ter pelo menos 6 caracteres.");
+      return;
+    }
+
     startTransition(async () => {
-      const resultado = await entrar(email, senha);
+      const resultado = await cadastrar(email, senha);
       if (resultado?.erro) {
         setErro(resultado.erro);
       }
@@ -25,10 +30,10 @@ export default function LoginForm() {
   return (
     <>
       <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
-        Entrar
+        Criar conta
       </h1>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-        Digite seu email e senha para acessar o portal.
+        Escolha um email e uma senha para acessar o portal.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-3">
@@ -45,7 +50,7 @@ export default function LoginForm() {
         <input
           type="password"
           required
-          placeholder="Senha"
+          placeholder="Senha (mínimo 6 caracteres)"
           value={senha}
           onChange={(event) => setSenha(event.target.value)}
           className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
@@ -60,24 +65,19 @@ export default function LoginForm() {
           disabled={pending}
           className="rounded-lg bg-blue-600 px-3.5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
         >
-          {pending ? "Entrando..." : "Entrar"}
+          {pending ? "Criando..." : "Criar conta"}
         </button>
       </form>
 
-      <div className="mt-5 flex items-center justify-between text-sm">
+      <p className="mt-5 text-sm text-slate-500 dark:text-slate-400">
+        Já tem conta?{" "}
         <Link
-          href="/cadastro"
+          href="/login"
           className="font-medium text-blue-600 hover:underline dark:text-blue-400"
         >
-          Criar conta
+          Entrar
         </Link>
-        <Link
-          href="/esqueci-senha"
-          className="text-slate-500 hover:underline dark:text-slate-400"
-        >
-          Esqueci minha senha
-        </Link>
-      </div>
+      </p>
     </>
   );
 }
