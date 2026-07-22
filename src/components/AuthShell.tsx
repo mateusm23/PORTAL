@@ -1,17 +1,94 @@
-type StatusFarol = "ok" | "atencao" | "critico";
+type IconProps = { className?: string };
 
-const FAROL: Array<{ label: string; status: StatusFarol }> = [
-  { label: "Prazo", status: "ok" },
-  { label: "Financeiro", status: "atencao" },
-  { label: "Segurança", status: "ok" },
-  { label: "Qualidade", status: "ok" },
+function IconLancar({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+      <path d="M4 18h16" />
+    </svg>
+  );
+}
+
+function IconValidar({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
+function IconRevisar({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function IconExportar({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 4v12M12 16l-4-4M12 16l4-4" />
+      <path d="M4 20h16" />
+    </svg>
+  );
+}
+
+const ETAPAS = [
+  {
+    titulo: "Lançar",
+    descricao: "O engenheiro registra os dados e as fotos do mês.",
+    Icone: IconLancar,
+  },
+  {
+    titulo: "Validar",
+    descricao: "O sistema confere se todas as seções foram preenchidas.",
+    Icone: IconValidar,
+  },
+  {
+    titulo: "Revisar",
+    descricao: "O responsável aprova antes de publicar.",
+    Icone: IconRevisar,
+  },
+  {
+    titulo: "Exportar",
+    descricao: "Gera o PDF final, pronto para o cliente.",
+    Icone: IconExportar,
+  },
 ];
-
-const CORES: Record<StatusFarol, { dot: string; text: string; label: string }> = {
-  ok: { dot: "bg-emerald-500", text: "text-emerald-700", label: "Em dia" },
-  atencao: { dot: "bg-amber-500", text: "text-amber-700", label: "Atenção" },
-  critico: { dot: "bg-red-500", text: "text-red-700", label: "Crítico" },
-};
 
 export default function AuthShell({ children }: { children: React.ReactNode }) {
   return (
@@ -27,36 +104,32 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <h1 className="max-w-md text-4xl font-semibold leading-tight tracking-tight text-balance text-slate-900">
-          O relatório mensal das suas obras, sempre em dia.
+          Do lançamento ao relatório final, em um só lugar.
         </h1>
         <p className="mt-4 max-w-sm text-base text-slate-600">
-          Preenchimento, fotos e farol de controle de cada obra, em um
-          só lugar — sem depender de planilha.
+          Acompanhe o ciclo completo do relatório mensal de cada obra —
+          sem planilha, sem retrabalho.
         </p>
 
-        <div className="mt-10 w-full max-w-xs rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-          <p className="mb-4 text-xs font-medium tracking-wide text-slate-500 uppercase">
-            Farol de controle · Julho
-          </p>
-          <ul className="flex flex-col gap-3">
-            {FAROL.map((item) => {
-              const cor = CORES[item.status];
-              return (
-                <li
-                  key={item.label}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <span className="text-slate-700">{item.label}</span>
-                  <span
-                    className={`flex items-center gap-1.5 font-medium ${cor.text}`}
-                  >
-                    <span className={`h-1.5 w-1.5 rounded-full ${cor.dot}`} />
-                    {cor.label}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="mt-10 flex flex-col">
+          {ETAPAS.map((etapa, i) => (
+            <div key={etapa.titulo} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm">
+                  <etapa.Icone className="h-5 w-5" />
+                </span>
+                {i < ETAPAS.length - 1 && (
+                  <span className="my-1 w-px flex-1 bg-slate-200" />
+                )}
+              </div>
+              <div className={i < ETAPAS.length - 1 ? "pb-6" : ""}>
+                <p className="font-medium text-slate-900">{etapa.titulo}</p>
+                <p className="mt-0.5 text-sm text-slate-600">
+                  {etapa.descricao}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
