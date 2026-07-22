@@ -98,7 +98,7 @@ export default async function PainelPage() {
   const obras = (data ?? []) as Obra[];
 
   return (
-    <AppShell titulo="Obras" email={user?.email}>
+    <AppShell titulo="Obras" email={user?.email} secaoAtiva="obras">
       {obras.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
           <p className="text-sm text-slate-500">

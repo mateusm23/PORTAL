@@ -21,16 +21,43 @@ function IconObras({ className }: { className?: string }) {
   );
 }
 
-const NAV = [{ href: "/painel", label: "Obras", Icone: IconObras }];
+function IconConfig({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    </svg>
+  );
+}
+
+const NAV = [
+  { href: "/painel", chave: "obras", label: "Obras", Icone: IconObras },
+  {
+    href: "/configuracoes",
+    chave: "configuracoes",
+    label: "Configurações",
+    Icone: IconConfig,
+  },
+] as const;
 
 export default function AppShell({
   children,
   titulo,
   email,
+  secaoAtiva,
 }: {
   children: React.ReactNode;
   titulo: string;
   email?: string;
+  secaoAtiva: (typeof NAV)[number]["chave"];
 }) {
   return (
     <div
@@ -44,16 +71,23 @@ export default function AppShell({
         </div>
 
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-2.5 rounded-md bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700"
-            >
-              <item.Icone className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
+          {NAV.map((item) => {
+            const ativo = item.chave === secaoAtiva;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium ${
+                  ativo
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <item.Icone className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="border-t border-slate-200 p-4">
