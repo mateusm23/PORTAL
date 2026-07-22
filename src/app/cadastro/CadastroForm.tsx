@@ -10,6 +10,7 @@ export default function CadastroForm() {
   const [contato, setContato] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [aguardandoConfirmacao, setAguardandoConfirmacao] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -25,8 +26,32 @@ export default function CadastroForm() {
       const resultado = await cadastrar(nome, email, contato, senha);
       if (resultado?.erro) {
         setErro(resultado.erro);
+      } else if (resultado?.aguardandoConfirmacao) {
+        setAguardandoConfirmacao(true);
       }
     });
+  }
+
+  if (aguardandoConfirmacao) {
+    return (
+      <div>
+        <h1 className="text-lg font-semibold text-slate-900">
+          Verifique seu email
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          Mandamos um link de confirmação para <strong>{email}</strong>.
+          Abre o email e clica no link para ativar sua conta.
+        </p>
+        <p className="mt-5 text-sm text-slate-500">
+          <Link
+            href="/login"
+            className="font-medium text-blue-600 hover:underline"
+          >
+            Voltar para o login
+          </Link>
+        </p>
+      </div>
+    );
   }
 
   return (
