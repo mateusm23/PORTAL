@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { sair } from "@/app/painel/actions";
 import { LogoMark } from "./Logo";
+import { VERSAO, ULTIMO_DEPLOY } from "@/lib/versao";
 
 function IconObras({ className }: { className?: string }) {
   return (
@@ -51,6 +52,16 @@ export default function AppShell({
             </Link>
           ))}
         </nav>
+
+        <div className="border-t border-slate-200 p-4">
+          <p className="text-xs text-slate-500">Mateus Monteiro</p>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            Deploy: {ULTIMO_DEPLOY}
+          </p>
+          <span className="mt-1.5 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+            v{VERSAO}
+          </span>
+        </div>
       </aside>
 
       <div className="flex flex-1 flex-col">
