@@ -92,49 +92,49 @@ const ETAPAS = [
 
 export default function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-full flex-1 bg-white">
-      <div className="hidden flex-1 flex-col justify-center px-16 lg:flex">
-        <div className="mb-10 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-            PR
-          </div>
-          <span className="font-semibold text-slate-900">
-            Portal de Relatórios Mensais
-          </span>
-        </div>
-
-        <h1 className="max-w-md text-4xl font-semibold leading-tight tracking-tight text-balance text-slate-900">
-          Do lançamento ao relatório final, em um só lugar.
-        </h1>
-        <p className="mt-4 max-w-sm text-base text-slate-600">
-          Acompanhe o ciclo completo do relatório mensal de cada obra —
-          sem planilha, sem retrabalho.
-        </p>
-
-        <div className="mt-10 flex flex-col">
-          {ETAPAS.map((etapa, i) => (
-            <div key={etapa.titulo} className="flex gap-4">
-              <div className="flex flex-col items-center">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm">
-                  <etapa.Icone className="h-5 w-5" />
-                </span>
-                {i < ETAPAS.length - 1 && (
-                  <span className="my-1 w-px flex-1 bg-slate-200" />
-                )}
-              </div>
-              <div className={i < ETAPAS.length - 1 ? "pb-6" : ""}>
-                <p className="font-medium text-slate-900">{etapa.titulo}</p>
-                <p className="mt-0.5 text-sm text-slate-600">
-                  {etapa.descricao}
-                </p>
-              </div>
+    <div className="flex min-h-full flex-1 items-center justify-center bg-white px-6 py-12">
+      <div className="grid w-full max-w-5xl items-center gap-16 lg:grid-cols-2">
+        <div className="hidden lg:block">
+          <div className="mb-10 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
+              PR
             </div>
-          ))}
-        </div>
-      </div>
+            <span className="font-semibold text-slate-900">
+              Portal de Relatórios Mensais
+            </span>
+          </div>
 
-      <div className="flex flex-1 items-center justify-center border-l border-slate-100 bg-white px-6 py-16">
-        <div className="w-full max-w-sm">
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight text-balance text-slate-900">
+            Do lançamento ao relatório final, em um só lugar.
+          </h1>
+          <p className="mt-4 max-w-sm text-base text-slate-600">
+            Acompanhe o ciclo completo do relatório mensal de cada
+            obra, sem planilha e sem retrabalho.
+          </p>
+
+          <div className="mt-10 flex flex-col">
+            {ETAPAS.map((etapa, i) => (
+              <div key={etapa.titulo} className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm">
+                    <etapa.Icone className="h-5 w-5" />
+                  </span>
+                  {i < ETAPAS.length - 1 && (
+                    <span className="my-1 w-px flex-1 bg-slate-200" />
+                  )}
+                </div>
+                <div className={i < ETAPAS.length - 1 ? "pb-6" : ""}>
+                  <p className="font-medium text-slate-900">{etapa.titulo}</p>
+                  <p className="mt-0.5 text-sm text-slate-600">
+                    {etapa.descricao}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="w-full max-w-sm justify-self-center">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
               PR
