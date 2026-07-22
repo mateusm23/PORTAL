@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { traduzErroAuth } from "@/lib/supabase/erros";
 
 export async function entrar(email: string, senha: string) {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export async function entrar(email: string, senha: string) {
   });
 
   if (error) {
-    return { erro: "Email ou senha incorretos." };
+    return { erro: traduzErroAuth(error.message) };
   }
 
   redirect("/painel");

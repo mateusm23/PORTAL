@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { traduzErroAuth } from "@/lib/supabase/erros";
 
 export async function pedirRedefinicaoSenha(email: string) {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ export async function pedirRedefinicaoSenha(email: string) {
   });
 
   if (error) {
-    return { erro: error.message };
+    return { erro: traduzErroAuth(error.message) };
   }
 
   return { erro: null };
