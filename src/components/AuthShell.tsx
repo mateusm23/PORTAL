@@ -1,3 +1,5 @@
+import { LogoMark } from "./Logo";
+
 type IconProps = { className?: string };
 
 function IconLancar({ className }: IconProps) {
@@ -96,9 +98,7 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
       <div className="grid w-full max-w-5xl items-center gap-16 lg:grid-cols-2">
         <div className="hidden lg:block">
           <div className="mb-10 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-              PR
-            </div>
+            <LogoMark className="h-9 w-9 rounded-lg" />
             <span className="font-semibold text-slate-900">
               Portal de Relatórios Mensais
             </span>
@@ -136,9 +136,7 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
 
         <div className="w-full max-w-sm justify-self-center">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-              PR
-            </div>
+            <LogoMark className="h-9 w-9 rounded-lg" />
             <span className="font-semibold text-slate-900">
               Portal de Relatórios Mensais
             </span>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoMark } from "@/components/Logo";
 
 const ETAPAS = [
   {
@@ -55,9 +56,7 @@ export default function StatusPage() {
     <div className="flex min-h-full flex-1 flex-col bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-8">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-            PR
-          </div>
+          <LogoMark className="h-9 w-9 rounded-lg" />
           <span className="font-semibold text-slate-900 dark:text-white">
             Portal de Relatórios Mensais
           </span>
