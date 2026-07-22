@@ -3,6 +3,7 @@ import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 
 const SUBNAV = [
+  { href: "/configuracoes", label: "Início" },
   { href: "/configuracoes/cadastros/obras", label: "Cadastros" },
   { href: "/configuracoes/acessos/obras", label: "Acessos" },
 ];
