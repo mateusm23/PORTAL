@@ -4,19 +4,23 @@ import { createClient } from "@/lib/supabase/server";
 type Obra = {
   id: string;
   nome: string;
-  tipo: "incorporacao_vertical" | "urbanismo";
-  escopo: "construcao" | "gerenciamento";
+  tipo: "incorporacao_vertical" | "urbanismo" | "multipropriedade";
+  escopo: "construcao" | "gerenciamento" | "administracao";
   status: "ativa" | "concluida" | "pausada";
+  estado: string | null;
+  cidade: string | null;
 };
 
 const TIPO_LABEL: Record<Obra["tipo"], string> = {
   incorporacao_vertical: "Incorporação vertical",
   urbanismo: "Urbanismo",
+  multipropriedade: "Multipropriedade",
 };
 
 const ESCOPO_SECOES: Array<{ chave: Obra["escopo"]; titulo: string }> = [
   { chave: "construcao", titulo: "Construção" },
   { chave: "gerenciamento", titulo: "Gerenciamento" },
+  { chave: "administracao", titulo: "Administração" },
 ];
 
 const STATUS: Record<Obra["status"], { label: string; dot: string; text: string }> = {
@@ -45,13 +49,15 @@ function IconObra({ className }: { className?: string }) {
 
 function CardObra({ obra }: { obra: Obra }) {
   const status = STATUS[obra.status];
+  const local = [obra.cidade, obra.estado].filter(Boolean).join(", ");
+
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
         <IconObra className="h-9 w-9 text-blue-300" />
       </div>
       <div className="p-4">
-        <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="mb-1 flex items-start justify-between gap-2">
           <h3 className="text-sm font-medium text-slate-900">{obra.nome}</h3>
           <span
             className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${status.text}`}
@@ -60,6 +66,7 @@ function CardObra({ obra }: { obra: Obra }) {
             {status.label}
           </span>
         </div>
+        {local && <p className="mb-2 text-xs text-slate-400">{local}</p>}
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
           {TIPO_LABEL[obra.tipo]}
         </span>
@@ -76,7 +83,7 @@ export default async function PainelPage() {
 
   const { data } = await supabase
     .from("obra")
-    .select("id, nome, tipo, escopo, status")
+    .select("id, nome, tipo, escopo, status, estado, cidade")
     .order("nome");
 
   const obras = (data ?? []) as Obra[];
