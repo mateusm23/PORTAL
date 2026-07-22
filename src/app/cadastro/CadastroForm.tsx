@@ -31,10 +31,8 @@ export default function CadastroForm() {
 
   return (
     <>
-      <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
-        Criar conta
-      </h1>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      <h1 className="text-lg font-semibold text-slate-900">Criar conta</h1>
+      <p className="mt-1 text-sm text-slate-600">
         Preencha seus dados para acessar o portal.
       </p>
 
@@ -46,7 +44,7 @@ export default function CadastroForm() {
           placeholder="Nome completo"
           value={nome}
           onChange={(event) => setNome(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
         <input
@@ -55,7 +53,7 @@ export default function CadastroForm() {
           placeholder="seu.email@exemplo.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
         <input
@@ -64,7 +62,7 @@ export default function CadastroForm() {
           placeholder="Telefone / contato"
           value={contato}
           onChange={(event) => setContato(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
         <input
@@ -73,12 +71,10 @@ export default function CadastroForm() {
           placeholder="Senha (mínimo 6 caracteres)"
           value={senha}
           onChange={(event) => setSenha(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
-        {erro && (
-          <p className="text-sm text-red-600 dark:text-red-400">{erro}</p>
-        )}
+        {erro && <p className="text-sm text-red-600">{erro}</p>}
 
         <button
           type="submit"
@@ -89,12 +85,9 @@ export default function CadastroForm() {
         </button>
       </form>
 
-      <p className="mt-5 text-sm text-slate-500 dark:text-slate-400">
+      <p className="mt-5 text-sm text-slate-500">
         Já tem conta?{" "}
-        <Link
-          href="/login"
-          className="font-medium text-blue-600 hover:underline dark:text-blue-400"
-        >
+        <Link href="/login" className="font-medium text-blue-600 hover:underline">
           Entrar
         </Link>
       </p>

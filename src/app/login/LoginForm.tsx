@@ -24,10 +24,8 @@ export default function LoginForm() {
 
   return (
     <>
-      <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
-        Entrar
-      </h1>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      <h1 className="text-lg font-semibold text-slate-900">Entrar</h1>
+      <p className="mt-1 text-sm text-slate-600">
         Digite seu email e senha para acessar o portal.
       </p>
 
@@ -39,7 +37,7 @@ export default function LoginForm() {
           placeholder="seu.email@exemplo.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
         <input
@@ -48,12 +46,10 @@ export default function LoginForm() {
           placeholder="Senha"
           value={senha}
           onChange={(event) => setSenha(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-white/15 dark:bg-white/5 dark:text-white"
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
 
-        {erro && (
-          <p className="text-sm text-red-600 dark:text-red-400">{erro}</p>
-        )}
+        {erro && <p className="text-sm text-red-600">{erro}</p>}
 
         <button
           type="submit"
@@ -67,14 +63,11 @@ export default function LoginForm() {
       <div className="mt-5 flex items-center justify-between text-sm">
         <Link
           href="/cadastro"
-          className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+          className="font-medium text-blue-600 hover:underline"
         >
           Criar conta
         </Link>
-        <Link
-          href="/esqueci-senha"
-          className="text-slate-500 hover:underline dark:text-slate-400"
-        >
+        <Link href="/esqueci-senha" className="text-slate-500 hover:underline">
           Esqueci minha senha
         </Link>
       </div>
