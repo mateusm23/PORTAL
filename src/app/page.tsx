@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const ETAPAS = [
   {
     titulo: "Fundação do projeto",
@@ -60,10 +62,18 @@ export default function Home() {
             Portal de Relatórios Mensais
           </span>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-          Em construção
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            Em construção
+          </span>
+          <Link
+            href="/login"
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+          >
+            Entrar
+          </Link>
+        </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 pb-20">
