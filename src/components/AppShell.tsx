@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { sair } from "@/app/painel/actions";
+import { createClient } from "@/lib/supabase/server";
 import { LogoMark } from "./Logo";
+import RailAccount from "./RailAccount";
 import { VERSAO, ULTIMO_DEPLOY } from "@/lib/versao";
 
 function IconObras({ className }: { className?: string }) {
@@ -48,80 +49,83 @@ const NAV = [
   },
 ] as const;
 
-export default function AppShell({
+export default async function AppShell({
   children,
   titulo,
-  email,
+  subtitulo,
   secaoAtiva,
+  flyout,
 }: {
   children: React.ReactNode;
   titulo: string;
-  email?: string;
+  subtitulo?: string;
   secaoAtiva: (typeof NAV)[number]["chave"];
+  flyout?: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let nome = user?.email ?? "";
+  if (user) {
+    const { data: usuario } = await supabase
+      .from("usuario")
+      .select("nome")
+      .eq("id", user.id)
+      .single();
+    if (usuario?.nome) nome = usuario.nome;
+  }
+
   return (
     <div
       className="flex overflow-hidden bg-slate-50"
       style={{ position: "fixed", inset: 0 }}
     >
-      <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 bg-white">
-        <div className="flex h-14 items-center gap-2.5 border-b border-slate-200 px-5">
-          <LogoMark className="h-7 w-7" />
-          <span className="text-sm font-semibold text-slate-900">Portal</span>
-        </div>
+      <aside className="flex w-16 shrink-0 flex-col items-center border-r border-slate-200 bg-white py-3.5">
+        <LogoMark className="mb-5 h-8 w-8 shrink-0 rounded-lg" />
 
-        <nav className="flex flex-1 flex-col gap-0.5 p-3">
+        <nav className="flex flex-1 flex-col items-center gap-1">
           {NAV.map((item) => {
             const ativo = item.chave === secaoAtiva;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium ${
+                title={item.label}
+                className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${
                   ativo
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50"
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                 }`}
               >
-                <item.Icone className="h-4 w-4" />
-                {item.label}
+                <item.Icone className="h-5 w-5" />
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t border-slate-200 p-4">
-          <p className="text-xs text-slate-500">Mateus Monteiro</p>
-          <p className="mt-0.5 text-[11px] text-slate-400">
-            Deploy: {ULTIMO_DEPLOY}
-          </p>
-          <span className="mt-1.5 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-            v{VERSAO}
-          </span>
-        </div>
+        {user && (
+          <RailAccount
+            nome={nome}
+            email={user.email ?? ""}
+            versao={VERSAO}
+            ultimoDeploy={ULTIMO_DEPLOY}
+          />
+        )}
       </aside>
 
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-          <h1 className="text-sm font-semibold text-slate-900">{titulo}</h1>
+      {flyout && (
+        <div className="flex w-[252px] shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white">
+          {flyout}
+        </div>
+      )}
 
-          {email && (
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-500">{email}</span>
-              <form action={sair}>
-                <button
-                  type="submit"
-                  className="text-sm font-medium text-slate-500 hover:text-slate-900"
-                >
-                  Sair
-                </button>
-              </form>
-            </div>
-          )}
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
-      </div>
+      <main className="flex-1 overflow-y-auto p-7">
+        <h1 className="text-lg font-semibold text-slate-900">{titulo}</h1>
+        {subtitulo && <p className="mt-1 text-sm text-slate-500">{subtitulo}</p>}
+        <div className="mt-6">{children}</div>
+      </main>
     </div>
   );
 }

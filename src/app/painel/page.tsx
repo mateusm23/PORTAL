@@ -86,9 +86,6 @@ function CardObra({ obra }: { obra: Obra }) {
 
 export default async function PainelPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { data } = await supabase
     .from("obra")
@@ -98,7 +95,11 @@ export default async function PainelPage() {
   const obras = (data ?? []) as Obra[];
 
   return (
-    <AppShell titulo="Obras" email={user?.email} secaoAtiva="obras">
+    <AppShell
+      titulo="Obras"
+      subtitulo="Visão geral das obras que você acompanha."
+      secaoAtiva="obras"
+    >
       {obras.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
           <p className="text-sm text-slate-500">
