@@ -1,14 +1,26 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import Link from "next/link";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
 import AuthShell from "@/components/AuthShell";
+import { createClient } from "@/lib/supabase/client";
 import { redefinirSenha } from "./actions";
 
+type Estado = "carregando" | "pronto" | "erro";
+
 export default function RedefinirSenhaPage() {
+  const [estado, setEstado] = useState<Estado>("carregando");
   const [senha, setSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data, error }) => {
+      setEstado(error || !data.session ? "erro" : "pronto");
+    });
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -30,6 +42,34 @@ export default function RedefinirSenhaPage() {
         setErro(resultado.erro);
       }
     });
+  }
+
+  if (estado === "carregando") {
+    return (
+      <AuthShell>
+        <p className="text-sm text-slate-500">Confirmando o link...</p>
+      </AuthShell>
+    );
+  }
+
+  if (estado === "erro") {
+    return (
+      <AuthShell>
+        <h1 className="text-lg font-semibold text-slate-900">
+          Link inválido ou expirado
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          Peça um novo link em &ldquo;Esqueci minha senha&rdquo; e tente
+          de novo.
+        </p>
+        <Link
+          href="/esqueci-senha"
+          className="mt-4 inline-block text-sm font-medium text-blue-600 hover:underline"
+        >
+          Pedir novo link
+        </Link>
+      </AuthShell>
+    );
   }
 
   return (
