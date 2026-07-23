@@ -64,13 +64,13 @@ export default function FiltroHeader(props: CustomHeaderProps & FiltroHeaderPara
           if (aberto) setAberto(false);
           else abrir();
         }}
-        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded ${
+        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
           aberto || temSelecao
             ? "bg-blue-600 text-white"
             : "bg-white/10 text-sky-200 hover:bg-white/20 hover:text-white"
         }`}
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-2.5 w-2.5">
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
           <path d="M3 5h18l-7 8v6l-4-2v-4z" />
         </svg>
       </button>

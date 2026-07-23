@@ -57,9 +57,20 @@ export async function atualizarObra(id: string, dados: ObraInput) {
 }
 
 export async function atualizarStatusObra(id: string, status: string) {
+  return atualizarCampoObra(id, "status", status);
+}
+
+export async function atualizarCampoObra(
+  id: string,
+  campo: "tipo" | "escopo" | "status",
+  valor: string,
+) {
   const supabase = await createClient();
 
-  const { error } = await supabase.from("obra").update({ status }).eq("id", id);
+  const { error } = await supabase
+    .from("obra")
+    .update({ [campo]: valor })
+    .eq("id", id);
 
   if (error) {
     return { erro: error.message };

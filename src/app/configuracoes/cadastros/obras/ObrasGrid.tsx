@@ -14,7 +14,7 @@ import {
   type ICellRendererParams,
 } from "ag-grid-community";
 import FiltroHeader from "./FiltroHeader";
-import { atualizarStatusObra } from "./actions";
+import { atualizarCampoObra } from "./actions";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -47,56 +47,55 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const TIPO_COR: Record<string, { texto: string; fundo: string }> = {
-  "Incorporação vertical": { texto: "#3730a3", fundo: "#e0e7ff" },
-  Urbanismo: { texto: "#065f46", fundo: "#d1fae5" },
-  Multipropriedade: { texto: "#6d28d9", fundo: "#ede9fe" },
+  incorporacao_vertical: { texto: "#3730a3", fundo: "#e0e7ff" },
+  urbanismo: { texto: "#065f46", fundo: "#d1fae5" },
+  multipropriedade: { texto: "#6d28d9", fundo: "#ede9fe" },
 };
 
 const ESCOPO_COR: Record<string, { texto: string; fundo: string }> = {
-  Construção: { texto: "#9a3412", fundo: "#ffedd5" },
-  Gerenciamento: { texto: "#1d4ed8", fundo: "#dbeafe" },
-  Administração: { texto: "#be185d", fundo: "#fce7f3" },
+  construcao: { texto: "#9a3412", fundo: "#ffedd5" },
+  gerenciamento: { texto: "#1d4ed8", fundo: "#dbeafe" },
+  administracao: { texto: "#be185d", fundo: "#fce7f3" },
 };
 
-const STATUS_COR: Record<string, { texto: string; fundo: string; ponto: string }> = {
-  ativa: { texto: "#047857", fundo: "#d1fae5", ponto: "#10b981" },
-  pausada: { texto: "#b45309", fundo: "#fef3c7", ponto: "#f59e0b" },
-  concluida: { texto: "#475569", fundo: "#e2e8f0", ponto: "#94a3b8" },
+const STATUS_COR: Record<string, { texto: string; fundo: string }> = {
+  ativa: { texto: "#047857", fundo: "#d1fae5" },
+  pausada: { texto: "#b45309", fundo: "#fef3c7" },
+  concluida: { texto: "#475569", fundo: "#e2e8f0" },
 };
 
-function Pill({ texto, cores }: { texto: string; cores: { texto: string; fundo: string } }) {
-  return (
-    <span
-      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-      style={{ color: cores.texto, background: cores.fundo }}
-    >
-      {texto}
-    </span>
-  );
-}
-
-function StatusCell({ data }: ICellRendererParams<Obra>) {
+function CampoSelectCell({
+  data,
+  campo,
+  opcoes,
+  cores,
+}: ICellRendererParams<Obra> & {
+  campo: "tipo" | "escopo" | "status";
+  opcoes: Record<string, string>;
+  cores: Record<string, { texto: string; fundo: string }>;
+}) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   if (!data) return null;
-  const cores = STATUS_COR[data.status] ?? STATUS_COR.ativa;
+  const valorAtual = data[campo];
+  const corAtual = cores[valorAtual] ?? { texto: "#475569", fundo: "#e2e8f0" };
 
-  function trocarStatus(novoStatus: string) {
+  function trocar(novoValor: string) {
     startTransition(async () => {
-      await atualizarStatusObra(data!.id, novoStatus);
+      await atualizarCampoObra(data!.id, campo, novoValor);
       router.refresh();
     });
   }
 
   return (
     <select
-      value={data.status}
+      value={valorAtual}
       disabled={pending}
-      onChange={(e) => trocarStatus(e.target.value)}
+      onChange={(e) => trocar(e.target.value)}
       className="cursor-pointer rounded-full border-none py-0.5 pr-6 pl-2.5 text-xs font-medium outline-none disabled:opacity-50"
-      style={{ color: cores.texto, background: cores.fundo }}
+      style={{ color: corAtual.texto, background: corAtual.fundo }}
     >
-      {Object.entries(STATUS_LABEL).map(([valor, label]) => (
+      {Object.entries(opcoes).map(([valor, label]) => (
         <option key={valor} value={valor}>
           {label}
         </option>
@@ -129,6 +128,7 @@ export default function ObrasGrid({ obras }: { obras: Obra[] }) {
   const [busca, setBusca] = useState("");
   const [toast, setToast] = useState<string | null>(null);
   const [selecionados, setSelecionados] = useState<Record<string, Set<string>>>({
+    nome: new Set(),
     cidade: new Set(),
     tipo: new Set(),
     escopo: new Set(),
@@ -151,13 +151,11 @@ export default function ObrasGrid({ obras }: { obras: Obra[] }) {
       obras.map((o) => ({
         ...o,
         cidadeEstado: [o.cidade, o.estado].filter(Boolean).join(", "),
-        tipoLabel: TIPO_LABEL[o.tipo] ?? o.tipo,
-        escopoLabel: ESCOPO_LABEL[o.escopo] ?? o.escopo,
       })),
     [obras],
   );
 
-  function valoresUnicos(chave: "cidade" | "tipoLabel" | "escopoLabel" | "status") {
+  function valoresUnicos(chave: "nome" | "cidade" | "tipo" | "escopo" | "status") {
     return Array.from(new Set(linhas.map((l) => String(l[chave] ?? "")).filter(Boolean))).sort((a, b) =>
       a.localeCompare(b, "pt-BR"),
     );
@@ -173,17 +171,45 @@ export default function ObrasGrid({ obras }: { obras: Obra[] }) {
       if (buscaLower && !l.nome.toLowerCase().includes(buscaLower) && !l.cidadeEstado.toLowerCase().includes(buscaLower)) {
         return false;
       }
+      if (selecionados.nome.size > 0 && !selecionados.nome.has(l.nome)) return false;
       if (selecionados.cidade.size > 0 && !selecionados.cidade.has(l.cidade ?? "")) return false;
-      if (selecionados.tipo.size > 0 && !selecionados.tipo.has(l.tipoLabel)) return false;
-      if (selecionados.escopo.size > 0 && !selecionados.escopo.has(l.escopoLabel)) return false;
+      if (selecionados.tipo.size > 0 && !selecionados.tipo.has(l.tipo)) return false;
+      if (selecionados.escopo.size > 0 && !selecionados.escopo.has(l.escopo)) return false;
       if (selecionados.status.size > 0 && !selecionados.status.has(l.status)) return false;
       return true;
     });
   }, [linhas, busca, selecionados]);
 
+  // filtro de tipo/escopo/status é feito pelo rótulo em português, mas o
+  // valor salvo é o código -- essa função faz a ponte nos dois sentidos
+  function filtroPorLabel(chave: string, labelMap: Record<string, string>) {
+    const reverso = Object.fromEntries(Object.entries(labelMap).map(([k, v]) => [v, k]));
+    return {
+      chave,
+      valoresUnicos: valoresUnicos(chave as "tipo" | "escopo" | "status").map(
+        (v) => labelMap[v] ?? v,
+      ),
+      selecionados: new Set(Array.from(selecionados[chave]).map((v) => labelMap[v] ?? v)),
+      onChange: (c: string, novo: Set<string>) =>
+        aoMudarFiltro(c, new Set(Array.from(novo).map((label) => reverso[label] ?? label))),
+    };
+  }
+
   const columnDefs = useMemo<ColDef[]>(
     () => [
-      { field: "nome", headerName: "Nome", flex: 1.3, sortable: true },
+      {
+        field: "nome",
+        headerName: "Nome",
+        flex: 1.3,
+        sortable: true,
+        headerComponent: FiltroHeader,
+        headerComponentParams: {
+          chave: "nome",
+          valoresUnicos: valoresUnicos("nome"),
+          selecionados: selecionados.nome,
+          onChange: aoMudarFiltro,
+        },
+      },
       {
         field: "cidadeEstado",
         headerName: "Cidade/UF",
@@ -198,35 +224,25 @@ export default function ObrasGrid({ obras }: { obras: Obra[] }) {
         },
       },
       {
-        field: "tipoLabel",
+        field: "tipo",
         headerName: "Tipo",
         flex: 1,
         sortable: true,
         headerComponent: FiltroHeader,
-        headerComponentParams: {
-          chave: "tipo",
-          valoresUnicos: valoresUnicos("tipoLabel"),
-          selecionados: selecionados.tipo,
-          onChange: aoMudarFiltro,
-        },
-        cellRenderer: (p: ICellRendererParams) => (
-          <Pill texto={p.value} cores={TIPO_COR[p.value] ?? { texto: "#475569", fundo: "#e2e8f0" }} />
+        headerComponentParams: filtroPorLabel("tipo", TIPO_LABEL),
+        cellRenderer: (p: ICellRendererParams<Obra>) => (
+          <CampoSelectCell {...p} campo="tipo" opcoes={TIPO_LABEL} cores={TIPO_COR} />
         ),
       },
       {
-        field: "escopoLabel",
+        field: "escopo",
         headerName: "Escopo",
         flex: 1,
         sortable: true,
         headerComponent: FiltroHeader,
-        headerComponentParams: {
-          chave: "escopo",
-          valoresUnicos: valoresUnicos("escopoLabel"),
-          selecionados: selecionados.escopo,
-          onChange: aoMudarFiltro,
-        },
-        cellRenderer: (p: ICellRendererParams) => (
-          <Pill texto={p.value} cores={ESCOPO_COR[p.value] ?? { texto: "#475569", fundo: "#e2e8f0" }} />
+        headerComponentParams: filtroPorLabel("escopo", ESCOPO_LABEL),
+        cellRenderer: (p: ICellRendererParams<Obra>) => (
+          <CampoSelectCell {...p} campo="escopo" opcoes={ESCOPO_LABEL} cores={ESCOPO_COR} />
         ),
       },
       {
@@ -235,19 +251,10 @@ export default function ObrasGrid({ obras }: { obras: Obra[] }) {
         flex: 0.9,
         sortable: true,
         headerComponent: FiltroHeader,
-        headerComponentParams: {
-          chave: "status",
-          valoresUnicos: valoresUnicos("status").map((v) => STATUS_LABEL[v] ?? v),
-          selecionados: new Set(Array.from(selecionados.status).map((v) => STATUS_LABEL[v] ?? v)),
-          onChange: (chave: string, novo: Set<string>) => {
-            const reverso = Object.fromEntries(Object.entries(STATUS_LABEL).map(([k, v]) => [v, k]));
-            aoMudarFiltro(
-              chave,
-              new Set(Array.from(novo).map((label) => reverso[label] ?? label)),
-            );
-          },
-        },
-        cellRenderer: StatusCell,
+        headerComponentParams: filtroPorLabel("status", STATUS_LABEL),
+        cellRenderer: (p: ICellRendererParams<Obra>) => (
+          <CampoSelectCell {...p} campo="status" opcoes={STATUS_LABEL} cores={STATUS_COR} />
+        ),
       },
       {
         headerName: "",
