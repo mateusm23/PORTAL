@@ -20,6 +20,7 @@ import {
   Toaster,
   Toast,
   ToastTitle,
+  ToastBody,
   useToastController,
   useId,
   TabList,
@@ -377,6 +378,7 @@ export default function AcessosPainel({
       dispatchToast(
         <Toast>
           <ToastTitle>Não foi possível atualizar o acesso agora. Nada foi alterado — tente de novo.</ToastTitle>
+          <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
       );
@@ -417,6 +419,7 @@ export default function AcessosPainel({
       dispatchToast(
         <Toast>
           <ToastTitle>Falha ao aplicar em massa — nenhum acesso foi alterado.</ToastTitle>
+          <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
       );

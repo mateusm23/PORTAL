@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ehAdmin } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -35,9 +36,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (request.nextUrl.pathname.startsWith("/configuracoes") && !ehAdmin(user.email)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/painel";
+    return NextResponse.redirect(url);
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/painel/:path*"],
+  matcher: ["/painel/:path*", "/configuracoes/:path*"],
 };

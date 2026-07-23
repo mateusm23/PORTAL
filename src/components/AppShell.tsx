@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { LogoMark } from "./Logo";
 import RailAccount from "./RailAccount";
 import { VERSAO, ULTIMO_DEPLOY } from "@/lib/versao";
+import { ehAdmin } from "@/lib/auth";
 
 function IconObras({ className }: { className?: string }) {
   return (
@@ -86,7 +87,7 @@ export default async function AppShell({
         <LogoMark className="mb-5 h-8 w-8 shrink-0 rounded-lg" />
 
         <nav className="flex flex-1 flex-col items-center gap-1">
-          {NAV.map((item) => {
+          {NAV.filter((item) => item.chave !== "configuracoes" || ehAdmin(user?.email)).map((item) => {
             const ativo = item.chave === secaoAtiva;
             return (
               <Link
