@@ -9,10 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fluentui/react-components": "^9.74.4",
+    "@fluentui/react-icons": "^2.0.333",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
-    "ag-grid-community": "^36.0.2",
-    "ag-grid-react": "^36.0.2",
     "next": "16.2.11",
     "react": "19.2.4",
     "react-dom": "19.2.4"

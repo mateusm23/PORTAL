@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { Switch } from "@fluentui/react-components";
 import { alternarAcesso } from "./actions";
 
 export default function AcessoCheckbox({
@@ -15,19 +16,14 @@ export default function AcessoCheckbox({
   const [pending, startTransition] = useTransition();
 
   return (
-    <label className="flex items-center gap-2 text-sm text-slate-700">
-      <input
-        type="checkbox"
-        defaultChecked={concedidoInicialmente}
-        disabled={pending}
-        onChange={(e) => {
-          const concedido = e.target.checked;
-          startTransition(() => {
-            alternarAcesso(usuarioId, obraId, concedido);
-          });
-        }}
-        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-      />
-    </label>
+    <Switch
+      defaultChecked={concedidoInicialmente}
+      disabled={pending}
+      onChange={(_e, data) => {
+        startTransition(() => {
+          alternarAcesso(usuarioId, obraId, data.checked);
+        });
+      }}
+    />
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition, type FormEvent } from "react";
+import { Input, Button, MessageBar, MessageBarBody } from "@fluentui/react-components";
 import { entrar } from "./actions";
 
 export default function LoginForm() {
@@ -30,41 +31,36 @@ export default function LoginForm() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-3">
-        <input
+        <Input
           type="email"
           required
           autoFocus
           placeholder="seu.email@exemplo.com"
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          onChange={(_e, data) => setEmail(data.value)}
         />
 
-        <input
+        <Input
           type="password"
           required
           placeholder="Senha"
           value={senha}
-          onChange={(event) => setSenha(event.target.value)}
-          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          onChange={(_e, data) => setSenha(data.value)}
         />
 
-        {erro && <p className="text-sm text-red-600">{erro}</p>}
+        {erro && (
+          <MessageBar intent="error">
+            <MessageBarBody>{erro}</MessageBarBody>
+          </MessageBar>
+        )}
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-lg bg-blue-600 px-3.5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
-        >
+        <Button appearance="primary" type="submit" disabled={pending}>
           {pending ? "Entrando..." : "Entrar"}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-5 flex items-center justify-between text-sm">
-        <Link
-          href="/cadastro"
-          className="font-medium text-blue-600 hover:underline"
-        >
+        <Link href="/cadastro" className="font-medium text-blue-600 hover:underline">
           Criar conta
         </Link>
         <Link href="/esqueci-senha" className="text-slate-500 hover:underline">

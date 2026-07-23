@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { Field, Input, Dropdown, Option, Button, MessageBar, MessageBarBody, MessageBarTitle } from "@fluentui/react-components";
+import { TIPO_LABEL, ESCOPO_LABEL, STATUS_LABEL } from "@/lib/obraCatalogo";
 import { criarObra, atualizarObra, type ObraInput } from "./actions";
-
-const campo =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
-const rotulo = "mb-1 block text-xs font-medium text-slate-600";
 
 export default function ObraForm({
   obraId,
@@ -49,9 +47,7 @@ export default function ObraForm({
     setErro(null);
 
     startTransition(async () => {
-      const resultado = obraId
-        ? await atualizarObra(obraId, dados)
-        : await criarObra(dados);
+      const resultado = obraId ? await atualizarObra(obraId, dados) : await criarObra(dados);
       if (resultado?.erro) {
         setErro(resultado.erro);
       }
@@ -63,92 +59,92 @@ export default function ObraForm({
       onSubmit={handleSubmit}
       className="flex max-w-lg flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6"
     >
-      <div>
-        <label className={rotulo}>Nome</label>
-        <input
+      <Field label="Nome" required>
+        <Input
           required
-          className={campo}
           value={dados.nome}
-          onChange={(e) => campoMudou("nome", e.target.value)}
+          onChange={(_e, data) => campoMudou("nome", data.value)}
         />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Tipo">
+          <Dropdown
+            value={TIPO_LABEL[dados.tipo] ?? dados.tipo}
+            selectedOptions={[dados.tipo]}
+            onOptionSelect={(_e, data) => campoMudou("tipo", data.optionValue ?? dados.tipo)}
+          >
+            {Object.entries(TIPO_LABEL).map(([valor, label]) => (
+              <Option key={valor} value={valor}>
+                {label}
+              </Option>
+            ))}
+          </Dropdown>
+        </Field>
+        <Field label="Escopo">
+          <Dropdown
+            value={ESCOPO_LABEL[dados.escopo] ?? dados.escopo}
+            selectedOptions={[dados.escopo]}
+            onOptionSelect={(_e, data) => campoMudou("escopo", data.optionValue ?? dados.escopo)}
+          >
+            {Object.entries(ESCOPO_LABEL).map(([valor, label]) => (
+              <Option key={valor} value={valor}>
+                {label}
+              </Option>
+            ))}
+          </Dropdown>
+        </Field>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className={rotulo}>Tipo</label>
-          <select
-            className={campo}
-            value={dados.tipo}
-            onChange={(e) => campoMudou("tipo", e.target.value)}
-          >
-            <option value="incorporacao_vertical">Incorporação vertical</option>
-            <option value="urbanismo">Urbanismo</option>
-            <option value="multipropriedade">Multipropriedade</option>
-          </select>
-        </div>
-        <div>
-          <label className={rotulo}>Escopo</label>
-          <select
-            className={campo}
-            value={dados.escopo}
-            onChange={(e) => campoMudou("escopo", e.target.value)}
-          >
-            <option value="construcao">Construção</option>
-            <option value="gerenciamento">Gerenciamento</option>
-            <option value="administracao">Administração</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className={rotulo}>Cidade</label>
-          <input
-            className={campo}
-            list="cidades-existentes"
+        <Field label="Cidade">
+          <Input
+            input={{ list: "cidades-existentes" }}
             value={dados.cidade}
-            onChange={(e) => campoMudou("cidade", e.target.value)}
+            onChange={(_e, data) => campoMudou("cidade", data.value)}
           />
           <datalist id="cidades-existentes">
             {(cidadesExistentes ?? []).map((cidade) => (
               <option key={cidade} value={cidade} />
             ))}
           </datalist>
-        </div>
-        <div>
-          <label className={rotulo}>Estado</label>
-          <input
-            className={campo}
+        </Field>
+        <Field label="Estado">
+          <Input
             maxLength={2}
             placeholder="UF"
             value={dados.estado}
-            onChange={(e) => campoMudou("estado", e.target.value.toUpperCase())}
+            onChange={(_e, data) => campoMudou("estado", data.value.toUpperCase())}
           />
-        </div>
+        </Field>
       </div>
 
-      <div>
-        <label className={rotulo}>Status</label>
-        <select
-          className={campo}
-          value={dados.status}
-          onChange={(e) => campoMudou("status", e.target.value)}
+      <Field label="Status">
+        <Dropdown
+          value={STATUS_LABEL[dados.status] ?? dados.status}
+          selectedOptions={[dados.status]}
+          onOptionSelect={(_e, data) => campoMudou("status", data.optionValue ?? dados.status)}
         >
-          <option value="ativa">Ativa</option>
-          <option value="pausada">Pausada</option>
-          <option value="concluida">Concluída</option>
-        </select>
-      </div>
+          {Object.entries(STATUS_LABEL).map(([valor, label]) => (
+            <Option key={valor} value={valor}>
+              {label}
+            </Option>
+          ))}
+        </Dropdown>
+      </Field>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && (
+        <MessageBar intent="error">
+          <MessageBarBody>
+            <MessageBarTitle>Não foi possível salvar</MessageBarTitle>
+            {erro}
+          </MessageBarBody>
+        </MessageBar>
+      )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
-      >
+      <Button appearance="primary" type="submit" disabled={pending}>
         {pending ? "Salvando..." : obraId ? "Salvar alterações" : "Criar obra"}
-      </button>
+      </Button>
     </form>
   );
 }

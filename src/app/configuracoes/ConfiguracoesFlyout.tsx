@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Accordion, AccordionItem, AccordionHeader, AccordionPanel } from "@fluentui/react-components";
 
 const GRUPOS = [
   {
@@ -19,7 +19,9 @@ const GRUPOS = [
 
 export default function ConfiguracoesFlyout() {
   const pathname = usePathname();
-  const [abertos, setAbertos] = useState<Record<string, boolean>>({});
+  const gruposAbertosPorPadrao = GRUPOS.filter((grupo) =>
+    grupo.itens.some((item) => pathname.startsWith(item.href)),
+  ).map((grupo) => grupo.chave);
 
   return (
     <div className="p-2">
@@ -34,38 +36,12 @@ export default function ConfiguracoesFlyout() {
         Configurações
       </Link>
 
-      {GRUPOS.map((grupo) => {
-        const temItemAtivo = grupo.itens.some((item) =>
-          pathname.startsWith(item.href),
-        );
-        const aberto = abertos[grupo.chave] ?? temItemAtivo;
-
-        return (
-          <div key={grupo.chave} className="mb-0.5">
-            <button
-              type="button"
-              onClick={() =>
-                setAbertos((atual) => ({
-                  ...atual,
-                  [grupo.chave]: !aberto,
-                }))
-              }
-              className="flex w-full items-center gap-2 rounded-md px-2 py-2.5 text-left text-[13.5px] font-medium text-slate-700 hover:bg-slate-50"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className={`h-3.5 w-3.5 shrink-0 text-blue-600 transition-transform ${
-                  aberto ? "" : "-rotate-90"
-                }`}
-              >
-                <path d="M7 10l5 5 5-5z" />
-              </svg>
-              {grupo.titulo}
-            </button>
-
-            {aberto && (
-              <div className="ml-[21px] flex flex-col border-l border-slate-200 pl-3">
+      <Accordion multiple collapsible defaultOpenItems={gruposAbertosPorPadrao}>
+        {GRUPOS.map((grupo) => (
+          <AccordionItem key={grupo.chave} value={grupo.chave}>
+            <AccordionHeader>{grupo.titulo}</AccordionHeader>
+            <AccordionPanel>
+              <div className="ml-[10px] flex flex-col border-l border-slate-200 pl-3">
                 {grupo.itens.map((item) => {
                   const ativo = pathname.startsWith(item.href);
                   return (
@@ -83,10 +59,10 @@ export default function ConfiguracoesFlyout() {
                   );
                 })}
               </div>
-            )}
-          </div>
-        );
-      })}
+            </AccordionPanel>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }
