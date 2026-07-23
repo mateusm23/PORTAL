@@ -36,7 +36,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (request.nextUrl.pathname.startsWith("/configuracoes") && !ehAdmin(user.email)) {
+  if (request.nextUrl.pathname.startsWith("/configuracoes") && !(await ehAdmin(supabase, user.id))) {
     const url = request.nextUrl.clone();
     url.pathname = "/painel";
     return NextResponse.redirect(url);

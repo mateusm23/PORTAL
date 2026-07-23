@@ -1,7 +1,9 @@
-// Único admin do sistema por enquanto (sem tabela de papéis/roles ainda).
-// Mesmo email usado nas políticas de RLS no Supabase — ver webapp/supabase/*.sql.
-export const ADMIN_EMAIL = "mateusnunesmonteiro@gmail.com";
+import type { createServerClient } from "@supabase/ssr";
 
-export function ehAdmin(email: string | null | undefined) {
-  return email === ADMIN_EMAIL;
+type SupabaseServer = ReturnType<typeof createServerClient>;
+
+export async function ehAdmin(supabase: SupabaseServer, userId: string | undefined) {
+  if (!userId) return false;
+  const { data } = await supabase.from("usuario").select("is_admin").eq("id", userId).single();
+  return data?.is_admin ?? false;
 }

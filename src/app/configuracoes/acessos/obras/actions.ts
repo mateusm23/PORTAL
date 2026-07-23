@@ -50,3 +50,17 @@ export async function definirAcessosDaObra(obraId: string, usuarioIds: string[],
   revalidatePath("/painel");
   return { erro: null };
 }
+
+export async function definirAdmin(usuarioId: string, isAdmin: boolean) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("usuario").update({ is_admin: isAdmin }).eq("id", usuarioId);
+
+  if (error) {
+    return { erro: error.message };
+  }
+
+  revalidatePath("/configuracoes/acessos/obras");
+  revalidatePath("/configuracoes");
+  return { erro: null };
+}

@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { LogoMark } from "./Logo";
 import RailAccount from "./RailAccount";
 import { VERSAO, ULTIMO_DEPLOY } from "@/lib/versao";
-import { ehAdmin } from "@/lib/auth";
 
 function IconObras({ className }: { className?: string }) {
   return (
@@ -69,13 +68,15 @@ export default async function AppShell({
   } = await supabase.auth.getUser();
 
   let nome = user?.email ?? "";
+  let souAdmin = false;
   if (user) {
     const { data: usuario } = await supabase
       .from("usuario")
-      .select("nome")
+      .select("nome, is_admin")
       .eq("id", user.id)
       .single();
     if (usuario?.nome) nome = usuario.nome;
+    souAdmin = usuario?.is_admin ?? false;
   }
 
   return (
@@ -87,7 +88,7 @@ export default async function AppShell({
         <LogoMark className="mb-5 h-8 w-8 shrink-0 rounded-lg" />
 
         <nav className="flex flex-1 flex-col items-center gap-1">
-          {NAV.filter((item) => item.chave !== "configuracoes" || ehAdmin(user?.email)).map((item) => {
+          {NAV.filter((item) => item.chave !== "configuracoes" || souAdmin).map((item) => {
             const ativo = item.chave === secaoAtiva;
             return (
               <Link

@@ -51,9 +51,9 @@ import {
   STATUS_COR,
   type CorBadge,
 } from "@/lib/obraCatalogo";
-import { alternarAcesso, definirAcessosDoUsuario, definirAcessosDaObra } from "./actions";
+import { alternarAcesso, definirAcessosDoUsuario, definirAcessosDaObra, definirAdmin } from "./actions";
 
-type Usuario = { id: string; nome: string | null; email: string };
+type Usuario = { id: string; nome: string | null; email: string; is_admin: boolean };
 type Obra = {
   id: string;
   nome: string;
@@ -172,6 +172,12 @@ const useStyles = makeStyles({
     whiteSpace: "nowrap",
   },
   badgesLinha: { display: "flex", gap: "6px", marginTop: "4px" },
+  linhaAdmin: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    marginTop: "6px",
+  },
   toolbarDireita: {
     display: "flex",
     flexWrap: "wrap",
@@ -296,6 +302,7 @@ function LinhaEsquerda({
   titulo,
   subtitulo,
   contagemTexto,
+  admin,
 }: {
   ativo: boolean;
   onClick: () => void;
@@ -303,6 +310,7 @@ function LinhaEsquerda({
   titulo: string;
   subtitulo: string;
   contagemTexto: string;
+  admin?: boolean;
 }) {
   const classes = useStyles();
   return (
@@ -317,7 +325,9 @@ function LinhaEsquerda({
     >
       {media}
       <div className={classes.itemTextos}>
-        <div className={classes.itemTitulo}>{titulo}</div>
+        <div className={classes.itemTitulo}>
+          {titulo} {admin && <Badge appearance="tint" color="important" size="small">Admin</Badge>}
+        </div>
         {subtitulo ? <div className={classes.itemSubtitulo}>{subtitulo}</div> : null}
       </div>
       <span className={classes.itemContagem}>{contagemTexto}</span>
@@ -329,10 +339,12 @@ export default function AcessosPainel({
   usuarios,
   obras,
   acessosIniciais,
+  usuarioLogadoId,
 }: {
   usuarios: Usuario[];
   obras: Obra[];
   acessosIniciais: Acesso[];
+  usuarioLogadoId: string;
 }) {
   const classes = useStyles();
   const toasterId = useId("toaster-acessos");
@@ -351,6 +363,10 @@ export default function AcessosPainel({
   const [filtroStatus, setFiltroStatus] = useState<Set<string>>(new Set());
   const [pendentes, setPendentes] = useState<Set<string>>(new Set());
   const [pendenteEmMassa, setPendenteEmMassa] = useState(false);
+  const [admins, setAdmins] = useState<Set<string>>(
+    () => new Set(usuarios.filter((u) => u.is_admin).map((u) => u.id)),
+  );
+  const [pendenteAdmin, setPendenteAdmin] = useState(false);
 
   function temAcesso(usuarioId: string, obraId: string) {
     return acessos.has(chave(usuarioId, obraId));
@@ -399,6 +415,44 @@ export default function AcessosPainel({
           {novoValor
             ? `Acesso liberado: ${usuario?.nome || usuario?.email} → ${obra?.nome}.`
             : `Acesso revogado: ${usuario?.nome || usuario?.email} → ${obra?.nome}.`}
+        </ToastTitle>
+      </Toast>,
+      { intent: "success" },
+    );
+  }
+
+  // promove/rebaixa administrador — nunca deixa mexer no próprio usuário logado,
+  // pra evitar alguém se rebaixar por engano e ficar sem acesso à própria tela
+  async function alternarAdmin(usuarioId: string, novoValor: boolean) {
+    if (usuarioId === usuarioLogadoId) return;
+    setPendenteAdmin(true);
+    const resultado = await definirAdmin(usuarioId, novoValor);
+    setPendenteAdmin(false);
+
+    if (resultado.erro) {
+      dispatchToast(
+        <Toast>
+          <ToastTitle>Não foi possível atualizar o papel de administrador.</ToastTitle>
+          <ToastBody>{resultado.erro}</ToastBody>
+        </Toast>,
+        { intent: "error" },
+      );
+      return;
+    }
+
+    setAdmins((atual) => {
+      const novo = new Set(atual);
+      if (novoValor) novo.add(usuarioId);
+      else novo.delete(usuarioId);
+      return novo;
+    });
+    const usuario = usuarios.find((u) => u.id === usuarioId);
+    dispatchToast(
+      <Toast>
+        <ToastTitle>
+          {novoValor
+            ? `${usuario?.nome || usuario?.email} agora é administrador.`
+            : `${usuario?.nome || usuario?.email} não é mais administrador.`}
         </ToastTitle>
       </Toast>,
       { intent: "success" },
@@ -597,6 +651,7 @@ export default function AcessosPainel({
                       titulo={u.nome || u.email}
                       subtitulo={u.email}
                       contagemTexto={`${contarObrasDoUsuario(u.id)} obras`}
+                      admin={admins.has(u.id)}
                     />
                   ))
               : obrasFiltradasEsquerda.length === 0
@@ -632,6 +687,21 @@ export default function AcessosPainel({
                   <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
                     {usuarioAtual?.email}
                   </Text>
+                  {usuarioAtual && (
+                    <div className={classes.linhaAdmin}>
+                      <Switch
+                        label="Administrador"
+                        checked={admins.has(usuarioAtual.id)}
+                        disabled={usuarioAtual.id === usuarioLogadoId || pendenteAdmin}
+                        onChange={(_e, data) => alternarAdmin(usuarioAtual.id, data.checked)}
+                      />
+                      {usuarioAtual.id === usuarioLogadoId && (
+                        <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+                          (você não pode alterar seu próprio papel)
+                        </Text>
+                      )}
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
