@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
-import ObrasTabela from "./ObrasTabela";
+import ObrasGrid from "./ObrasGrid";
 
 export default async function CadastroObrasPage() {
   const supabase = await createClient();
@@ -25,7 +25,7 @@ export default async function CadastroObrasPage() {
       </div>
 
       <Suspense>
-        <ObrasTabela obras={obras ?? []} />
+        <ObrasGrid obras={obras ?? []} />
       </Suspense>
     </div>
   );
