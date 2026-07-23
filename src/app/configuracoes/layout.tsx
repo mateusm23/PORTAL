@@ -9,7 +9,6 @@ export default function ConfiguracoesLayout({
   return (
     <AppShell
       titulo="Configurações"
-      subtitulo="Cadastros de obras e controle de acesso."
       secaoAtiva="configuracoes"
       flyout={<ConfiguracoesFlyout />}
     >
