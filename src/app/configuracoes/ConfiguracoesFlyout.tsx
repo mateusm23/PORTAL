@@ -31,7 +31,7 @@ export default function ConfiguracoesFlyout() {
             : "text-slate-700 hover:bg-slate-50"
         }`}
       >
-        Início
+        Configurações
       </Link>
 
       {GRUPOS.map((grupo) => {

@@ -1,3 +1,3 @@
 // Atualizado a cada commit -- ver convenção em CONTEXTO_PROJETO.md
-export const VERSAO = "1.6";
-export const ULTIMO_DEPLOY = "22/07/2026 21:22";
+export const VERSAO = "1.7";
+export const ULTIMO_DEPLOY = "22/07/2026 21:27";
