@@ -54,7 +54,10 @@ export default function FiltroHeader(props: CustomHeaderProps & FiltroHeaderPara
   const temSelecao = selecionados.size > 0;
 
   return (
-    <div className="flex w-full items-center justify-between gap-1.5">
+    <div
+      className="flex h-full w-full items-center justify-between gap-1.5"
+      style={{ backgroundColor: "#0e3244" }}
+    >
       <span>{displayName}</span>
       <button
         ref={botaoRef}
@@ -64,13 +67,13 @@ export default function FiltroHeader(props: CustomHeaderProps & FiltroHeaderPara
           if (aberto) setAberto(false);
           else abrir();
         }}
-        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
           aberto || temSelecao
-            ? "bg-blue-600 text-white"
-            : "bg-white/10 text-sky-200 hover:bg-white/20 hover:text-white"
+            ? "bg-blue-500 text-white"
+            : "bg-[#1c4a5e] text-sky-100 hover:bg-[#25607a] hover:text-white"
         }`}
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
           <path d="M3 5h18l-7 8v6l-4-2v-4z" />
         </svg>
       </button>
