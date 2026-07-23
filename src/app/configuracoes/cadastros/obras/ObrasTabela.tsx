@@ -169,9 +169,9 @@ export default function ObrasTabela({ obras }: { obras: Obra[] }) {
         </span>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium text-slate-500">
+      <div className="overflow-hidden rounded-xl border border-[#c7d2e0] bg-white">
+        <table className="w-full border-collapse text-sm">
+          <thead className="bg-[#0b2e3d] text-left text-xs font-medium text-slate-200">
             <tr>
               <ThOrdenavel
                 label="Nome"
@@ -187,8 +187,8 @@ export default function ObrasTabela({ obras }: { obras: Obra[] }) {
                 asc={ordemAsc}
                 onClick={() => alternarOrdenacao("cidade")}
               />
-              <th className="px-4 py-2.5">Tipo</th>
-              <th className="px-4 py-2.5">Escopo</th>
+              <th className="border border-[#123c4d] px-4 py-2.5">Tipo</th>
+              <th className="border border-[#123c4d] px-4 py-2.5">Escopo</th>
               <ThOrdenavel
                 label="Status"
                 coluna="status"
@@ -196,16 +196,19 @@ export default function ObrasTabela({ obras }: { obras: Obra[] }) {
                 asc={ordemAsc}
                 onClick={() => alternarOrdenacao("status")}
               />
-              <th className="px-4 py-2.5" />
+              <th className="border border-[#123c4d] px-4 py-2.5" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {obrasFiltradas.map((obra) => (
-              <LinhaObra key={obra.id} obra={obra} />
+          <tbody>
+            {obrasFiltradas.map((obra, indice) => (
+              <LinhaObra key={obra.id} obra={obra} indice={indice} />
             ))}
             {obrasFiltradas.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                <td
+                  colSpan={6}
+                  className="border border-[#c7d2e0] px-4 py-8 text-center text-slate-400"
+                >
                   Nenhuma obra encontrada com esses filtros.
                 </td>
               </tr>
@@ -230,14 +233,14 @@ function ThOrdenavel({
   onClick: () => void;
 }) {
   return (
-    <th className="px-4 py-2.5">
+    <th className="border border-[#123c4d] px-4 py-2.5">
       <button
         type="button"
         onClick={onClick}
-        className="flex items-center gap-1 hover:text-slate-700"
+        className="flex items-center gap-1 hover:text-white"
       >
         {label}
-        <span className={ativa ? "text-blue-600" : "text-slate-300"}>
+        <span className={ativa ? "text-sky-300" : "text-slate-400"}>
           {ativa && !asc ? "↓" : "↑"}
         </span>
       </button>
@@ -245,9 +248,10 @@ function ThOrdenavel({
   );
 }
 
-function LinhaObra({ obra }: { obra: Obra }) {
+function LinhaObra({ obra, indice }: { obra: Obra; indice: number }) {
   const [pending, startTransition] = useTransition();
   const status = statusInfo(obra.status);
+  const zebra = indice % 2 === 0 ? "bg-white" : "bg-slate-50";
 
   function trocarStatus(novoStatus: string) {
     startTransition(async () => {
@@ -255,15 +259,17 @@ function LinhaObra({ obra }: { obra: Obra }) {
     });
   }
 
+  const celula = "border border-[#c7d2e0] px-4 py-2.5";
+
   return (
-    <tr className="hover:bg-slate-50">
-      <td className="px-4 py-2.5 font-medium text-slate-900">{obra.nome}</td>
-      <td className="px-4 py-2.5 text-slate-500">
+    <tr className={`${zebra} hover:bg-blue-50/40`}>
+      <td className={`${celula} font-medium text-slate-900`}>{obra.nome}</td>
+      <td className={`${celula} text-slate-500`}>
         {[obra.cidade, obra.estado].filter(Boolean).join(", ")}
       </td>
-      <td className="px-4 py-2.5 text-slate-500">{TIPO_LABEL[obra.tipo]}</td>
-      <td className="px-4 py-2.5 text-slate-500">{ESCOPO_LABEL[obra.escopo]}</td>
-      <td className="px-4 py-2.5">
+      <td className={`${celula} text-slate-500`}>{TIPO_LABEL[obra.tipo]}</td>
+      <td className={`${celula} text-slate-500`}>{ESCOPO_LABEL[obra.escopo]}</td>
+      <td className={celula}>
         <select
           value={obra.status}
           disabled={pending}
@@ -277,7 +283,7 @@ function LinhaObra({ obra }: { obra: Obra }) {
           ))}
         </select>
       </td>
-      <td className="px-4 py-2.5 text-right">
+      <td className={`${celula} text-right`}>
         <Link
           href={`/configuracoes/cadastros/obras/${obra.id}`}
           className="font-medium text-blue-600 hover:underline"
