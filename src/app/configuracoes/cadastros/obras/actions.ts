@@ -30,7 +30,7 @@ export async function criarObra(dados: ObraInput) {
   }
 
   revalidatePath("/painel");
-  redirect("/configuracoes/cadastros/obras");
+  redirect("/configuracoes/cadastros/obras?sucesso=criada");
 }
 
 export async function atualizarObra(id: string, dados: ObraInput) {
@@ -53,5 +53,19 @@ export async function atualizarObra(id: string, dados: ObraInput) {
   }
 
   revalidatePath("/painel");
-  redirect("/configuracoes/cadastros/obras");
+  redirect("/configuracoes/cadastros/obras?sucesso=atualizada");
+}
+
+export async function atualizarStatusObra(id: string, status: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("obra").update({ status }).eq("id", id);
+
+  if (error) {
+    return { erro: error.message };
+  }
+
+  revalidatePath("/painel");
+  revalidatePath("/configuracoes/cadastros/obras");
+  return { erro: null };
 }

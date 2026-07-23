@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
 import { criarObra, atualizarObra, type ObraInput } from "./actions";
 
 const campo =
@@ -10,20 +10,35 @@ const rotulo = "mb-1 block text-xs font-medium text-slate-600";
 export default function ObraForm({
   obraId,
   valoresIniciais,
+  cidadesExistentes,
 }: {
   obraId?: string;
   valoresIniciais?: Partial<ObraInput>;
+  cidadesExistentes?: string[];
 }) {
-  const [dados, setDados] = useState<ObraInput>({
+  const valoresBase: ObraInput = {
     nome: valoresIniciais?.nome ?? "",
     tipo: valoresIniciais?.tipo ?? "incorporacao_vertical",
     escopo: valoresIniciais?.escopo ?? "gerenciamento",
     status: valoresIniciais?.status ?? "ativa",
     estado: valoresIniciais?.estado ?? "",
     cidade: valoresIniciais?.cidade ?? "",
-  });
+  };
+
+  const [dados, setDados] = useState<ObraInput>(valoresBase);
   const [erro, setErro] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const alterado = JSON.stringify(dados) !== JSON.stringify(valoresBase);
+
+  useEffect(() => {
+    function avisar(event: BeforeUnloadEvent) {
+      if (!alterado) return;
+      event.preventDefault();
+    }
+    window.addEventListener("beforeunload", avisar);
+    return () => window.removeEventListener("beforeunload", avisar);
+  }, [alterado]);
 
   function campoMudou<K extends keyof ObraInput>(chave: K, valor: ObraInput[K]) {
     setDados((atual) => ({ ...atual, [chave]: valor }));
@@ -90,9 +105,15 @@ export default function ObraForm({
           <label className={rotulo}>Cidade</label>
           <input
             className={campo}
+            list="cidades-existentes"
             value={dados.cidade}
             onChange={(e) => campoMudou("cidade", e.target.value)}
           />
+          <datalist id="cidades-existentes">
+            {(cidadesExistentes ?? []).map((cidade) => (
+              <option key={cidade} value={cidade} />
+            ))}
+          </datalist>
         </div>
         <div>
           <label className={rotulo}>Estado</label>
