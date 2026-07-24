@@ -1,8 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { makeStyles, tokens, Badge, Text, Button } from "@fluentui/react-components";
-import { Edit20Regular } from "@fluentui/react-icons";
+import { makeStyles, tokens, Badge, Text } from "@fluentui/react-components";
+import {
+  Edit20Regular,
+  ArrowTrending20Regular,
+  DocumentBulletList20Regular,
+  TaskListLtr20Regular,
+  ChevronRight20Regular,
+} from "@fluentui/react-icons";
 import { TIPO_LABEL, ESCOPO_LABEL, STATUS_LABEL, TIPO_COR, ESCOPO_COR, STATUS_COR } from "@/lib/obraCatalogo";
 import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
 import MapaObra from "@/components/MapaObra";
@@ -14,6 +20,19 @@ type CampoAtivo = { campo_chave: string; valor: string | null };
 const useStyles = makeStyles({
   badgesLinha: { display: "flex", gap: "6px", marginTop: "8px" },
   subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginTop: "4px" },
+
+  linhaAcessoRapidoTopo: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginTop: "20px" },
+  cartaoAcessoRapido: {
+    display: "flex", alignItems: "center", gap: "12px",
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderRadius: tokens.borderRadiusXLarge,
+    boxShadow: tokens.shadow8,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    padding: "16px 18px",
+    cursor: "pointer",
+    textDecoration: "none",
+    ":hover": { backgroundColor: tokens.colorNeutralBackground2 },
+  },
 
   linhaPrincipal: {
     display: "grid",
@@ -106,11 +125,49 @@ export default function ObraHome({
             </Badge>
           </div>
         </div>
-        <Link href={`/painel/${obra.id}/atualizar-informacoes`}>
-          <Button appearance="primary" icon={<Edit20Regular />}>
-            Atualizar Informações
-          </Button>
+      </div>
+
+      <div className={classes.linhaAcessoRapidoTopo}>
+        <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
+          <div className={classes.iconTileIconeWrap}>
+            <ArrowTrending20Regular fontSize={18} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Text weight="medium" size={300} block>Dashboard</Text>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Em breve</Text>
+          </div>
+        </div>
+
+        <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
+          <div className={classes.iconTileIconeWrap}>
+            <DocumentBulletList20Regular fontSize={18} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Text weight="medium" size={300} block>Histórico de Relatórios</Text>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Em breve</Text>
+          </div>
+        </div>
+
+        <Link href={`/painel/${obra.id}/atualizar-informacoes`} className={classes.cartaoAcessoRapido}>
+          <div className={classes.iconTileIconeWrap}>
+            <Edit20Regular fontSize={18} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Text weight="medium" size={300} block>Atualizar Informações</Text>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Preencher dados do mês</Text>
+          </div>
+          <ChevronRight20Regular style={{ color: tokens.colorNeutralForeground3 }} />
         </Link>
+
+        <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
+          <div className={classes.iconTileIconeWrap}>
+            <TaskListLtr20Regular fontSize={18} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Text weight="medium" size={300} block>Ações</Text>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Em breve</Text>
+          </div>
+        </div>
       </div>
 
       <div className={classes.linhaPrincipal}>
