@@ -10,17 +10,19 @@ type Obra = {
   status: "ativa" | "concluida" | "pausada";
   estado: string | null;
   cidade: string | null;
+  fotoUrl: string | null;
 };
 
 export default async function PainelPage() {
   const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("obra")
-    .select("id, nome, tipo, escopo, status, estado, cidade")
-    .order("nome");
+  const [{ data: obrasData }, { data: fotos }] = await Promise.all([
+    supabase.from("obra").select("id, nome, tipo, escopo, status, estado, cidade").order("nome"),
+    supabase.from("obra_info_fixa").select("obra_id, foto_url"),
+  ]);
 
-  const obras = (data ?? []) as Obra[];
+  const fotoPorObra = new Map((fotos ?? []).map((f) => [f.obra_id, f.foto_url]));
+  const obras: Obra[] = (obrasData ?? []).map((o) => ({ ...o, fotoUrl: fotoPorObra.get(o.id) ?? null }));
 
   return (
     <AppShell titulo="Obras" subtitulo="Visão geral das obras que você acompanha." secaoAtiva="obras">

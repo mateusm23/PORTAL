@@ -12,6 +12,7 @@ type Obra = {
   status: string;
   estado: string | null;
   cidade: string | null;
+  fotoUrl: string | null;
 };
 
 const ESCOPO_SECOES: Array<{ chave: string; titulo: string }> = [
@@ -55,8 +56,13 @@ function CardObra({ obra }: { obra: Obra }) {
       href={`/painel/${obra.id}`}
       className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
     >
-      <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
-        <IconObra className="h-9 w-9 text-blue-300" />
+      <div className="flex aspect-video items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 to-slate-100">
+        {obra.fotoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={obra.fotoUrl} alt={`Foto de ${obra.nome}`} className="h-full w-full object-cover" />
+        ) : (
+          <IconObra className="h-9 w-9 text-blue-300" />
+        )}
       </div>
       <div className="p-4">
         <div className="mb-1.5 flex items-start justify-between gap-2">

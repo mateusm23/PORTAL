@@ -18,7 +18,7 @@ export default async function ObraHomePage({ params }: { params: Promise<{ id: s
     notFound();
   }
 
-  const localizacao = infoFixa?.endereco ? await geocodificarEndereco(infoFixa.endereco) : null;
+  const localizacao = await geocodificarEndereco(infoFixa?.endereco ?? "", obra.cidade, obra.estado);
 
   return (
     <AppShell titulo={obra.nome} secaoAtiva="obras">

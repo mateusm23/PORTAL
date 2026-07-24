@@ -198,10 +198,11 @@ export default function AtualizarInformacoesForm({
                 <Location20Regular fontSize={16} /> Endereço (usado no mapa da Home)
               </span>
             }
+            hint={`Só a rua e o número — cidade/UF (${obra.cidade}/${obra.estado}) já vem do cadastro da obra.`}
           >
             <Input
               value={endereco}
-              placeholder="Rua, número, bairro, cidade/UF..."
+              placeholder="Ex: Rua das Flores, 250 - Bairro Centro"
               onChange={(_e, data) => setEndereco(data.value)}
             />
           </Field>
