@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import AtualizarInformacoesForm from "./AtualizarInformacoesForm";
 
@@ -18,12 +17,10 @@ export default async function AtualizarInformacoesPage({ params }: { params: Pro
   }
 
   return (
-    <AppShell titulo="Atualizar Informações" subtitulo={obra.nome} secaoAtiva="obras">
-      <AtualizarInformacoesForm
-        obra={obra}
-        infoFixaInicial={infoFixa ?? { foto_url: null, endereco: null }}
-        camposAtivosIniciais={camposAtivos ?? []}
-      />
-    </AppShell>
+    <AtualizarInformacoesForm
+      obra={obra}
+      infoFixaInicial={infoFixa ?? { foto_url: null, endereco: null }}
+      camposAtivosIniciais={camposAtivos ?? []}
+    />
   );
 }

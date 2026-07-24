@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import ObraHome from "./ObraHome";
 
@@ -18,8 +17,6 @@ export default async function ObraHomePage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <AppShell titulo={obra.nome} secaoAtiva="obras">
-      <ObraHome obra={obra} infoFixa={infoFixa ?? { foto_url: null, endereco: null }} camposAtivos={camposAtivos ?? []} />
-    </AppShell>
+    <ObraHome obra={obra} infoFixa={infoFixa ?? { foto_url: null, endereco: null }} camposAtivos={camposAtivos ?? []} />
   );
 }

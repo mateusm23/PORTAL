@@ -30,6 +30,7 @@ const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
   subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginTop: "4px" },
   voltarLink: { display: "inline-flex", alignItems: "center", gap: "4px", fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, marginBottom: "12px" },
+  tituloPagina: { fontSize: tokens.fontSizeBase500, fontWeight: tokens.fontWeightSemibold, color: tokens.colorNeutralForeground1, marginBottom: "4px" },
   cartao: {
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusXLarge,
@@ -166,6 +167,10 @@ export default function AtualizarInformacoesForm({
       <Link href={`/painel/${obra.id}`} className={classes.voltarLink}>
         <ArrowLeft20Regular fontSize={14} /> Voltar pra {obra.nome}
       </Link>
+
+      <Text as="h1" className={classes.tituloPagina}>
+        Atualizar Informações
+      </Text>
 
       <div className={classes.cartaoFixo}>
         <div className={classes.subtitulo} style={{ marginTop: 0, marginBottom: 16 }}>

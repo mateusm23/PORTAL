@@ -1,4 +1,3 @@
-import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import ObrasVitrine from "./ObrasVitrine";
 
@@ -24,9 +23,5 @@ export default async function PainelPage() {
   const fotoPorObra = new Map((fotos ?? []).map((f) => [f.obra_id, f.foto_url]));
   const obras: Obra[] = (obrasData ?? []).map((o) => ({ ...o, fotoUrl: fotoPorObra.get(o.id) ?? null }));
 
-  return (
-    <AppShell titulo="Obras" subtitulo="Visão geral das obras que você acompanha." secaoAtiva="obras">
-      <ObrasVitrine obras={obras} />
-    </AppShell>
-  );
+  return <ObrasVitrine obras={obras} />;
 }

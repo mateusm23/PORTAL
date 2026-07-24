@@ -123,7 +123,7 @@ export default async function AppShell({
         </div>
       )}
 
-      <main className="flex-1 overflow-y-auto p-7">
+      <main className="relative flex-1 overflow-y-auto p-7">
         <h1 className="text-lg font-semibold text-slate-900">{titulo}</h1>
         {subtitulo && <p className="mt-1 text-sm text-slate-500">{subtitulo}</p>}
         <div className="mt-6">{children}</div>
