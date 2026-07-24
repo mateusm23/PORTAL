@@ -22,6 +22,8 @@ async function buscarNominatim(consulta: string): Promise<{ lat: number; lon: nu
   }
 }
 
+export type ResultadoGeocodificacao = { lat: number; lon: number; precisao: "endereco" | "cidade" };
+
 // Converte um endereço em texto pra lat/lon usando o Nominatim (geocodificação
 // gratuita do próprio OpenStreetMap, mesma origem dos tiles do MapaObra).
 // Cacheado por 24h (revalidate) pra não estourar o limite de uso do serviço
@@ -30,23 +32,26 @@ async function buscarNominatim(consulta: string): Promise<{ lat: number; lon: nu
 // Recebe cidade/estado separados (já existem no cadastro da obra) e monta a
 // consulta completa por baixo dos panos — a pessoa só precisa digitar a rua,
 // não o endereço inteiro. Se não achar o endereço exato, cai pro nível da
-// cidade (sempre resolve), em vez de simplesmente não mostrar mapa nenhum.
+// cidade (sempre resolve), em vez de simplesmente não mostrar mapa nenhum —
+// `precisao` diz qual dos dois aconteceu, pra dar retorno claro pra quem
+// preencheu (ver botão "Verificar endereço" em Atualizar Informações).
 export async function geocodificarEndereco(
   endereco: string,
   cidade?: string | null,
   estado?: string | null,
-): Promise<{ lat: number; lon: number } | null> {
+): Promise<ResultadoGeocodificacao | null> {
   const rua = endereco.trim();
   const cidadeEstado = [cidade, estado].filter(Boolean).join(" - ");
 
   if (rua) {
     const consultaCompleta = [rua, cidadeEstado, "Brasil"].filter(Boolean).join(", ");
     const resultado = await buscarNominatim(consultaCompleta);
-    if (resultado) return resultado;
+    if (resultado) return { ...resultado, precisao: "endereco" };
   }
 
   if (cidadeEstado) {
-    return buscarNominatim(`${cidadeEstado}, Brasil`);
+    const resultado = await buscarNominatim(`${cidadeEstado}, Brasil`);
+    if (resultado) return { ...resultado, precisao: "cidade" };
   }
 
   return null;

@@ -15,11 +15,19 @@ import {
   ToastBody,
   useToastController,
   useId,
+  MessageBar,
+  MessageBarBody,
 } from "@fluentui/react-components";
-import { Location20Regular, CheckmarkCircle20Regular, ArrowUpload20Regular, ArrowLeft20Regular } from "@fluentui/react-icons";
+import {
+  Location20Regular,
+  CheckmarkCircle20Regular,
+  ArrowUpload20Regular,
+  ArrowLeft20Regular,
+  Search20Regular,
+} from "@fluentui/react-icons";
 import { createClient } from "@/lib/supabase/client";
 import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
-import { salvarFotoObra, salvarInformacoesGerais } from "./actions";
+import { salvarFotoObra, salvarInformacoesGerais, verificarEndereco } from "./actions";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; cidade: string | null; estado: string | null };
 type InfoFixa = { foto_url: string | null; endereco: string | null };
@@ -78,6 +86,11 @@ export default function AtualizarInformacoesForm({
   );
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [verificando, setVerificando] = useState(false);
+  const [resultadoEndereco, setResultadoEndereco] = useState<{
+    intent: "success" | "warning" | "error";
+    mensagem: string;
+  } | null>(null);
 
   const camposAtivos = camposAtivosIniciais.map((c) => c.campo_chave as CampoChave);
 
@@ -128,6 +141,29 @@ export default function AtualizarInformacoesForm({
       </Toast>,
       { intent: "success" },
     );
+  }
+
+  async function verificarEnderecoDigitado() {
+    setVerificando(true);
+    setResultadoEndereco(null);
+    const resultado = await verificarEndereco(endereco, obra.cidade, obra.estado);
+    setVerificando(false);
+
+    if (!resultado.encontrado) {
+      setResultadoEndereco({
+        intent: "error",
+        mensagem: "Não encontramos esse endereço. Confira a escrita ou tente com menos detalhes (só rua e número).",
+      });
+      return;
+    }
+    if (resultado.precisao === "endereco") {
+      setResultadoEndereco({ intent: "success", mensagem: "Endereço encontrado — o pino vai aparecer exatamente nesse local." });
+    } else {
+      setResultadoEndereco({
+        intent: "warning",
+        mensagem: `Não achamos essa rua específica — o mapa vai mostrar o centro de ${obra.cidade}/${obra.estado} até você ajustar.`,
+      });
+    }
   }
 
   async function salvar() {
@@ -200,11 +236,30 @@ export default function AtualizarInformacoesForm({
             }
             hint={`Só a rua e o número — cidade/UF (${obra.cidade}/${obra.estado}) já vem do cadastro da obra.`}
           >
-            <Input
-              value={endereco}
-              placeholder="Ex: Rua das Flores, 250 - Bairro Centro"
-              onChange={(_e, data) => setEndereco(data.value)}
-            />
+            <div style={{ display: "flex", gap: 8 }}>
+              <Input
+                value={endereco}
+                placeholder="Ex: Rua das Flores, 250 - Bairro Centro"
+                style={{ flex: 1 }}
+                onChange={(_e, data) => {
+                  setEndereco(data.value);
+                  setResultadoEndereco(null);
+                }}
+              />
+              <Button
+                appearance="outline"
+                icon={<Search20Regular />}
+                disabled={verificando || !endereco.trim()}
+                onClick={verificarEnderecoDigitado}
+              >
+                {verificando ? "Verificando..." : "Verificar endereço"}
+              </Button>
+            </div>
+            {resultadoEndereco && (
+              <MessageBar intent={resultadoEndereco.intent} style={{ marginTop: 8 }}>
+                <MessageBarBody>{resultadoEndereco.mensagem}</MessageBarBody>
+              </MessageBar>
+            )}
           </Field>
         </div>
       </div>
