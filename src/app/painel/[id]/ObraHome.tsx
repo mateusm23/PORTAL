@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { makeStyles, tokens, Badge, Text, Button } from "@fluentui/react-components";
-import { Location20Regular, Edit20Regular } from "@fluentui/react-icons";
+import { Edit20Regular } from "@fluentui/react-icons";
 import { TIPO_LABEL, ESCOPO_LABEL, STATUS_LABEL, TIPO_COR, ESCOPO_COR, STATUS_COR } from "@/lib/obraCatalogo";
 import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
-
-const MapaObra = dynamic(() => import("@/components/MapaObra"), { ssr: false });
+import MapaObra from "@/components/MapaObra";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; status: string; cidade: string | null; estado: string | null };
 type InfoFixa = { foto_url: string | null; endereco: string | null };
@@ -68,14 +66,6 @@ const useStyles = makeStyles({
     height: "220px",
     position: "relative",
   },
-  mapaPill: {
-    position: "absolute", top: "10px", left: "10px", zIndex: 1000,
-    display: "flex", alignItems: "center", gap: "6px",
-    padding: "5px 10px", borderRadius: tokens.borderRadiusCircular,
-    fontSize: tokens.fontSizeBase200, fontWeight: tokens.fontWeightMedium,
-    backgroundColor: "rgba(255,255,255,0.92)", color: tokens.colorNeutralForeground1,
-    boxShadow: tokens.shadow4,
-  },
   mapaVazio: {
     height: "220px", borderRadius: tokens.borderRadiusXLarge, border: `1px dashed ${tokens.colorNeutralStroke2}`,
     display: "flex", alignItems: "center", justifyContent: "center", fontSize: tokens.fontSizeBase200,
@@ -87,14 +77,15 @@ export default function ObraHome({
   obra,
   infoFixa,
   camposAtivos,
-  localizacao,
 }: {
   obra: Obra;
   infoFixa: InfoFixa;
   camposAtivos: CampoAtivo[];
-  localizacao: { lat: number; lon: number } | null;
 }) {
   const classes = useStyles();
+  const cidadeEstado = obra.cidade && obra.estado ? `${obra.cidade} - ${obra.estado}` : null;
+  const enderecoCompleto = [infoFixa.endereco, cidadeEstado, "Brasil"].filter(Boolean).join(", ");
+  const temLocalizacao = Boolean(infoFixa.endereco || cidadeEstado);
 
   return (
     <div>
@@ -166,18 +157,12 @@ export default function ObraHome({
       </div>
 
       <div className={classes.linhaMapa}>
-        {localizacao ? (
+        {temLocalizacao ? (
           <div className={classes.mapaCard}>
-            <div className={classes.mapaPill}>
-              <Location20Regular fontSize={14} />
-              {obra.cidade}/{obra.estado}
-            </div>
-            <MapaObra lat={localizacao.lat} lon={localizacao.lon} />
+            <MapaObra endereco={enderecoCompleto} />
           </div>
         ) : (
-          <div className={classes.mapaVazio}>
-            {infoFixa.endereco ? "Não foi possível localizar esse endereço no mapa." : "Sem endereço cadastrado ainda."}
-          </div>
+          <div className={classes.mapaVazio}>Sem endereço cadastrado ainda.</div>
         )}
         <div />
       </div>

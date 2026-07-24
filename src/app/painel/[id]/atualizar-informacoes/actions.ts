@@ -2,18 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { geocodificarEndereco } from "@/lib/geocodificar";
-
-// chamado pelo botão "Verificar endereço" em Atualizar Informações — dá
-// retorno na hora se o endereço digitado foi encontrado, em vez da pessoa só
-// descobrir depois ao abrir a Home da obra.
-export async function verificarEndereco(endereco: string, cidade: string | null, estado: string | null) {
-  const resultado = await geocodificarEndereco(endereco, cidade, estado);
-  if (!resultado) {
-    return { encontrado: false as const, precisao: null };
-  }
-  return { encontrado: true as const, precisao: resultado.precisao };
-}
 
 export async function salvarFotoObra(obraId: string, fotoUrl: string) {
   const supabase = await createClient();

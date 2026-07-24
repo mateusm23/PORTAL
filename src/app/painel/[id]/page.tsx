@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
-import { geocodificarEndereco } from "@/lib/geocodificar";
 import ObraHome from "./ObraHome";
 
 export default async function ObraHomePage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,16 +17,9 @@ export default async function ObraHomePage({ params }: { params: Promise<{ id: s
     notFound();
   }
 
-  const localizacao = await geocodificarEndereco(infoFixa?.endereco ?? "", obra.cidade, obra.estado);
-
   return (
     <AppShell titulo={obra.nome} secaoAtiva="obras">
-      <ObraHome
-        obra={obra}
-        infoFixa={infoFixa ?? { foto_url: null, endereco: null }}
-        camposAtivos={camposAtivos ?? []}
-        localizacao={localizacao}
-      />
+      <ObraHome obra={obra} infoFixa={infoFixa ?? { foto_url: null, endereco: null }} camposAtivos={camposAtivos ?? []} />
     </AppShell>
   );
 }
