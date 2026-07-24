@@ -8,7 +8,10 @@ const GRUPOS = [
   {
     chave: "cadastros",
     titulo: "Cadastros",
-    itens: [{ href: "/configuracoes/cadastros/obras", label: "Obras" }],
+    itens: [
+      { href: "/configuracoes/cadastros/obras", label: "Obras" },
+      { href: "/configuracoes/cadastros/campos-obra", label: "Campos da Obra" },
+    ],
   },
   {
     chave: "acessos",

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Badge } from "@fluentui/react-components";
 import { TIPO_LABEL, TIPO_COR, STATUS_LABEL, STATUS_COR } from "@/lib/obraCatalogo";
 
@@ -50,7 +51,10 @@ function CardObra({ obra }: { obra: Obra }) {
   const local = [obra.cidade, obra.estado].filter(Boolean).join(", ");
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <Link
+      href={`/painel/${obra.id}`}
+      className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
         <IconObra className="h-9 w-9 text-blue-300" />
       </div>
@@ -66,7 +70,7 @@ function CardObra({ obra }: { obra: Obra }) {
           {TIPO_LABEL[obra.tipo]}
         </Badge>
       </div>
-    </div>
+    </Link>
   );
 }
 

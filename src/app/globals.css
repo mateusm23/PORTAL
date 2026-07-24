@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* MapaObra (Leaflet) — atribuição discreta, sem o rótulo grande de baixo */
+.leaflet-control-attribution {
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0 4px;
+}
+.leaflet-control-zoom {
+  border: none !important;
+}
