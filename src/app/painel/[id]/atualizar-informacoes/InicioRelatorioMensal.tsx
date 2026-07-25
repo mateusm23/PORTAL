@@ -33,6 +33,7 @@ import { formatarCompetencia } from "@/lib/competencia";
 import { criarNovoRelatorio } from "./actions";
 
 const useStyles = makeStyles({
+  pagina: { maxWidth: "900px", margin: "0 auto" },
   wrap: { display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 20px 20px", maxWidth: "720px", margin: "0 auto" },
   progresso: {
     display: "flex", alignItems: "center", gap: "10px", marginBottom: "28px", padding: "10px 18px",
@@ -107,7 +108,7 @@ export default function InicioRelatorioMensal({
   }
 
   return (
-    <div>
+    <div className={classes.pagina}>
       <Toaster toasterId={toasterId} />
       <CabecalhoRelatorio obraNome={obraNome} subtitulo="Relatório Mensal" competencia={competenciaLabel ?? undefined} />
 

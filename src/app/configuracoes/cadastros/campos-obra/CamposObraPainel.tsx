@@ -8,6 +8,8 @@ import {
   Text,
   Input,
   Switch,
+  TabList,
+  Tab,
   Toaster,
   Toast,
   ToastTitle,
@@ -19,15 +21,34 @@ import {
   MessageBarTitle,
 } from "@fluentui/react-components";
 import { Search20Regular, BuildingMultiple20Regular, ShieldLock20Regular } from "@fluentui/react-icons";
-import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
+import { CATALOGO_CAMPOS_GERAIS } from "@/lib/obraCampoCatalogo";
+import { SECOES_RELATORIO } from "@/lib/relatorioSecoesCatalogo";
 import { TIPO_LABEL } from "@/lib/obraCatalogo";
-import { habilitarCampo, desabilitarCampo } from "./actions";
+import { habilitarCampo, desabilitarCampo, habilitarCampoSecao, desabilitarCampoSecao } from "./actions";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; cidade: string | null; estado: string | null };
 type CampoAtivo = { obra_id: string; campo_chave: string };
+type CampoSecaoAtivo = { obra_id: string; secao_chave: string; campo_chave: string };
 
-function chave(obraId: string, campoChave: string) {
-  return `${obraId}::${campoChave}`;
+// catálogo combinado: "Informações Gerais" (estático, sem mês — obraCampoCatalogo.ts)
+// + as seções do relatório mensal que já têm campos de verdade (só
+// "Informações da Capa" até agora; Prazo/Financeiro entram aqui quando
+// forem desenhados). Pro admin é tudo igual — só liga/desliga.
+const CATALOGO_SECOES = {
+  informacoesGerais: { label: "Informações Gerais", campos: CATALOGO_CAMPOS_GERAIS as Record<string, { label: string; icone: (typeof CATALOGO_CAMPOS_GERAIS)[keyof typeof CATALOGO_CAMPOS_GERAIS]["icone"] }> },
+  // "Informações da Capa" é a única seção do relatório com campos de verdade
+  // até agora — sempre presente (por isso sem spread condicional, que deixaria
+  // o tipo de CATALOGO_SECOES["informacoesCapa"] como "possivelmente undefined").
+  informacoesCapa: {
+    label: SECOES_RELATORIO.informacoesCapa.label,
+    campos: (SECOES_RELATORIO.informacoesCapa.campos ?? {}) as Record<string, { label: string; icone: (typeof CATALOGO_CAMPOS_GERAIS)[keyof typeof CATALOGO_CAMPOS_GERAIS]["icone"] }>,
+  },
+};
+
+type SecaoId = keyof typeof CATALOGO_SECOES;
+
+function chaveCampo(obraId: string, secaoId: string, campoChave: string) {
+  return `${obraId}::${secaoId}::${campoChave}`;
 }
 
 const useStyles = makeStyles({
@@ -65,6 +86,7 @@ const useStyles = makeStyles({
   itemContagem: { fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, flexShrink: 0 },
   cabecalhoDireita: { display: "flex", alignItems: "center", gap: "12px", padding: "18px 20px 12px 20px" },
   cabecalhoTextos: { flex: 1, minWidth: 0 },
+  abasSecao: { padding: "0 12px", borderBottom: `1px solid ${tokens.colorNeutralStroke3}` },
   linhaCampo: {
     display: "flex", alignItems: "center", gap: "12px", padding: "12px 20px",
     borderTop: `1px solid ${tokens.colorNeutralStroke3}`,
@@ -76,26 +98,34 @@ const useStyles = makeStyles({
   },
   campoLabel: { flex: 1, fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground1 },
   secaoBloqueadaWrap: {
-    padding: "20px", display: "flex", alignItems: "center", gap: "10px",
+    padding: "16px 20px", display: "flex", alignItems: "center", gap: "10px",
     color: tokens.colorNeutralForeground3, fontSize: tokens.fontSizeBase200,
+    borderTop: `1px solid ${tokens.colorNeutralStroke3}`,
   },
 });
 
 export default function CamposObraPainel({
   obras,
   camposAtivosIniciais,
+  camposSecaoAtivosIniciais,
 }: {
   obras: Obra[];
   camposAtivosIniciais: CampoAtivo[];
+  camposSecaoAtivosIniciais: CampoSecaoAtivo[];
 }) {
   const classes = useStyles();
   const toasterId = useId("toaster-campos-obra");
   const { dispatchToast } = useToastController(toasterId);
 
   const [obraId, setObraId] = useState<string | undefined>(obras[0]?.id);
+  const [secaoId, setSecaoId] = useState<SecaoId>("informacoesGerais");
   const [busca, setBusca] = useState("");
   const [ativos, setAtivos] = useState<Set<string>>(
-    () => new Set(camposAtivosIniciais.map((c) => chave(c.obra_id, c.campo_chave))),
+    () =>
+      new Set([
+        ...camposAtivosIniciais.map((c) => chaveCampo(c.obra_id, "informacoesGerais", c.campo_chave)),
+        ...camposSecaoAtivosIniciais.map((c) => chaveCampo(c.obra_id, c.secao_chave, c.campo_chave)),
+      ]),
   );
   const [pendentes, setPendentes] = useState<Set<string>>(new Set());
 
@@ -105,16 +135,29 @@ export default function CamposObraPainel({
   });
 
   const obraAtual = obras.find((o) => o.id === obraId);
+  const secaoAtual = CATALOGO_SECOES[secaoId];
 
   function contarAtivos(id: string) {
-    return Object.keys(CATALOGO_CAMPOS_GERAIS).filter((c) => ativos.has(chave(id, c))).length;
+    return Object.entries(CATALOGO_SECOES).reduce(
+      (soma, [secao, cat]) => soma + Object.keys(cat.campos).filter((c) => ativos.has(chaveCampo(id, secao, c))).length,
+      0,
+    );
   }
 
-  async function alternarCampo(campoChave: CampoChave, ativo: boolean) {
+  async function alternarCampo(campoChave: string, ativo: boolean) {
     if (!obraId || !obraAtual) return;
-    const k = chave(obraId, campoChave);
+    const k = chaveCampo(obraId, secaoId, campoChave);
     setPendentes((atual) => new Set(atual).add(k));
-    const resultado = ativo ? await habilitarCampo(obraId, campoChave) : await desabilitarCampo(obraId, campoChave);
+
+    const resultado =
+      secaoId === "informacoesGerais"
+        ? ativo
+          ? await habilitarCampo(obraId, campoChave as never)
+          : await desabilitarCampo(obraId, campoChave as never)
+        : ativo
+          ? await habilitarCampoSecao(obraId, secaoId, campoChave)
+          : await desabilitarCampoSecao(obraId, secaoId, campoChave);
+
     setPendentes((atual) => {
       const novo = new Set(atual);
       novo.delete(k);
@@ -141,7 +184,7 @@ export default function CamposObraPainel({
     dispatchToast(
       <Toast>
         <ToastTitle>
-          {CATALOGO_CAMPOS_GERAIS[campoChave].label} {ativo ? "ativado" : "desativado"} para {obraAtual.nome}.
+          {secaoAtual.campos[campoChave].label} {ativo ? "ativado" : "desativado"} para {obraAtual.nome}.
         </ToastTitle>
       </Toast>,
       { intent: "success" },
@@ -157,9 +200,9 @@ export default function CamposObraPainel({
       <Toaster toasterId={toasterId} />
 
       <div className={classes.tituloWrap}>
-        <h1 className={classes.titulo}>Configurações · Habilitar Campos da Obra</h1>
+        <h1 className={classes.titulo}>Configurações · Seções e Campos da Obra</h1>
         <div className={classes.subtitulo}>
-          Só admin vê essa tela — decide quais campos cada obra mostra. O engenheiro nunca vê essa configuração, só o resultado dela.
+          Só admin vê essa tela — decide quais campos cada obra mostra, seção por seção. O engenheiro nunca vê essa configuração, só o resultado dela.
         </div>
       </div>
 
@@ -169,8 +212,8 @@ export default function CamposObraPainel({
             <ShieldLock20Regular style={{ verticalAlign: "middle", marginRight: 6 }} />
             Área restrita ao administrador
           </MessageBarTitle>
-          Isso aqui só define ESTRUTURA (quais campos existem pra essa obra) — nenhum valor é digitado nesta tela. Quem preenche o
-          valor de cada campo é o engenheiro, na tela &quot;Atualizar Informações&quot;.
+          Isso aqui só define ESTRUTURA (quais campos existem pra essa obra, em cada seção) — nenhum valor é digitado nesta tela. Quem preenche
+          o valor é o engenheiro, na tela &quot;Atualizar Informações&quot;.
         </MessageBarBody>
       </MessageBar>
 
@@ -225,34 +268,40 @@ export default function CamposObraPainel({
                 </Text>
               </div>
               <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-                {contarAtivos(obraAtual.id)} de {Object.keys(CATALOGO_CAMPOS_GERAIS).length} campos ativos
+                {[...ativos].filter((k) => k.startsWith(`${obraAtual.id}::${secaoId}::`)).length} de {Object.keys(secaoAtual.campos).length} campos ativos
               </Text>
             </div>
-            <Text weight="semibold" size={300} style={{ padding: "0 20px" }}>
-              Seção: Informações Gerais
-            </Text>
-            {(Object.entries(CATALOGO_CAMPOS_GERAIS) as [CampoChave, (typeof CATALOGO_CAMPOS_GERAIS)[CampoChave]][]).map(
-              ([campoChave, meta]) => {
-                const k = chave(obraAtual.id, campoChave);
-                const Icone = meta.icone;
-                return (
-                  <div key={campoChave} className={classes.linhaCampo}>
-                    <div className={classes.campoIconeWrap}>
-                      <Icone fontSize={18} />
-                    </div>
-                    <span className={classes.campoLabel}>{meta.label}</span>
-                    <Switch
-                      checked={ativos.has(k)}
-                      disabled={pendentes.has(k)}
-                      onChange={(_e, data) => alternarCampo(campoChave, data.checked)}
-                    />
+
+            <div className={classes.abasSecao}>
+              <TabList selectedValue={secaoId} onTabSelect={(_e, data) => setSecaoId(data.value as SecaoId)}>
+                {Object.entries(CATALOGO_SECOES).map(([id, s]) => (
+                  <Tab key={id} value={id}>
+                    {s.label}
+                  </Tab>
+                ))}
+              </TabList>
+            </div>
+
+            {Object.entries(secaoAtual.campos).map(([campoChave, meta]) => {
+              const k = chaveCampo(obraAtual.id, secaoId, campoChave);
+              const Icone = meta.icone;
+              return (
+                <div key={campoChave} className={classes.linhaCampo}>
+                  <div className={classes.campoIconeWrap}>
+                    <Icone fontSize={18} />
                   </div>
-                );
-              },
-            )}
+                  <span className={classes.campoLabel}>{meta.label}</span>
+                  <Switch
+                    checked={ativos.has(k)}
+                    disabled={pendentes.has(k)}
+                    onChange={(_e, data) => alternarCampo(campoChave, data.checked)}
+                  />
+                </div>
+              );
+            })}
             <div className={classes.secaoBloqueadaWrap}>
               <ShieldLock20Regular fontSize={16} />
-              Situação Atual, Prazo, Financeiro e as demais seções entram aqui conforme forem construídas.
+              Prazo, Financeiro e as demais seções do relatório mensal entram aqui como novas abas, conforme forem construídas.
             </div>
           </div>
         )}

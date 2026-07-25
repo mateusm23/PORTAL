@@ -9,7 +9,7 @@ import { makeStyles, tokens, Badge } from "@fluentui/react-components";
 // petróleo + fino cinza) e a cor petróleo do badge de competência reaproveitam
 // o mesmo acento já usado em ObrasGrid.tsx — não é uma paleta nova.
 const useStyles = makeStyles({
-  cabecalho: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: "20px", paddingBottom: "6px" },
+  cabecalho: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "20px", paddingBottom: "6px" },
   titulo: { fontSize: "30px", fontWeight: 700, color: "#0f172a", margin: 0, lineHeight: 1.2 },
   subtitulo: { fontSize: "18px", fontWeight: tokens.fontWeightMedium, color: "#64748b", marginTop: "6px" },
   badges: { display: "flex", alignItems: "flex-start", gap: "10px", flexShrink: 0 },

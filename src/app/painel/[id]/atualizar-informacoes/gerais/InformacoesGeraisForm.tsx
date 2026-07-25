@@ -30,7 +30,11 @@ type CampoAtivo = { campo_chave: string; valor: string | null };
 const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
   subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginTop: "4px" },
-  voltarLink: { display: "inline-flex", alignItems: "center", gap: "4px", fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, marginBottom: "12px" },
+  voltarLink: {
+    display: "inline-flex", alignItems: "center", gap: "6px", fontSize: tokens.fontSizeBase300, fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2, cursor: "pointer", marginBottom: "18px",
+    ":hover": { color: tokens.colorBrandForeground1 },
+  },
   cartao: {
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusXLarge,
@@ -165,7 +169,7 @@ export default function InformacoesGeraisForm({
       <Toaster toasterId={toasterId} />
 
       <Link href={`/painel/${obra.id}/atualizar-informacoes`} className={classes.voltarLink}>
-        <ArrowLeft20Regular fontSize={14} /> Voltar
+        <ArrowLeft20Regular fontSize={18} /> Voltar
       </Link>
 
       <CabecalhoRelatorio obraNome={obra.nome} subtitulo="Informações Gerais" />

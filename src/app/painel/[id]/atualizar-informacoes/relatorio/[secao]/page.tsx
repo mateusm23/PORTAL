@@ -33,7 +33,7 @@ export default async function SecaoRelatorioPage({ params }: { params: Promise<{
     redirect(`/painel/${id}/atualizar-informacoes`);
   }
 
-  const [{ data: status }, { data: infoCapa }, { data: infoFixa }, { data: camposAtivos }] = await Promise.all([
+  const [{ data: status }, { data: infoCapa }, { data: infoFixa }, { data: camposAtivos }, { data: camposSecaoAtivos }] = await Promise.all([
     supabase
       .from("relatorio_secao_status")
       .select("finalizado")
@@ -49,6 +49,7 @@ export default async function SecaoRelatorioPage({ params }: { params: Promise<{
       : Promise.resolve({ data: null }),
     supabase.from("obra_info_fixa").select("foto_url").eq("obra_id", id).maybeSingle(),
     supabase.from("obra_campo_ativo").select("campo_chave, valor").eq("obra_id", id),
+    supabase.from("obra_secao_campo_ativo").select("campo_chave").eq("obra_id", id).eq("secao_chave", secaoChave),
   ]);
 
   return (
@@ -67,6 +68,7 @@ export default async function SecaoRelatorioPage({ params }: { params: Promise<{
       infoCapaInicial={infoCapa ?? { cliente_contratante: null, responsavel_tecnico: null, registro_profissional: null, logotipo_url: null }}
       fotoUrl={infoFixa?.foto_url ?? null}
       camposAtivos={camposAtivos ?? []}
+      camposSecaoAtivos={(camposSecaoAtivos ?? []).map((c) => c.campo_chave)}
     />
   );
 }

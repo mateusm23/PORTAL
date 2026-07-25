@@ -3,6 +3,8 @@ import {
   Image20Regular,
   Flag20Regular,
   Money20Regular,
+  Home20Regular,
+  BuildingMultiple20Regular,
   ContactCard20Regular,
   Person20Regular,
   Certificate20Regular,
@@ -21,15 +23,23 @@ const ICONES_SECAO: Record<SecaoChave, FluentIcon> = {
   financeiro: Money20Regular,
 };
 
+// nomeObra/fotoCapa/tipologia são "somenteLeitura": o admin ainda liga/desliga
+// se entram na capa (controla a tela de Configurações · Seções e Campos da
+// Obra), mas o engenheiro nunca digita o valor deles aqui — o valor vem de
+// outro lugar (cadastro da obra, Foto e Localização, Informações Gerais).
 const CAMPOS_INFORMACOES_CAPA = {
+  nomeObra: { label: "Nome da obra", icone: BuildingMultiple20Regular, somenteLeitura: true },
+  fotoCapa: { label: "Foto de capa", icone: Image20Regular, somenteLeitura: true },
+  tipologia: { label: "Tipologia", icone: Home20Regular, somenteLeitura: true },
   clienteContratante: { label: "Cliente / Contratante", icone: ContactCard20Regular },
   responsavelTecnico: { label: "Responsável Técnico", icone: Person20Regular },
   registroProfissional: { label: "Registro (CREA/CAU)", icone: Certificate20Regular },
-} satisfies Record<string, { label: string; icone: FluentIcon }>;
+  logotipoCliente: { label: "Logotipo do Cliente", icone: Image20Regular },
+} satisfies Record<string, { label: string; icone: FluentIcon; somenteLeitura?: boolean }>;
 
 export const SECOES_RELATORIO: Record<
   SecaoChave,
-  { label: string; icone: FluentIcon; temReplicar: boolean; emConstrucao: boolean; campos?: Record<string, { label: string; icone: FluentIcon }> }
+  { label: string; icone: FluentIcon; temReplicar: boolean; emConstrucao: boolean; campos?: Record<string, { label: string; icone: FluentIcon; somenteLeitura?: boolean }> }
 > = {
   informacoesCapa: { ...SECOES_RELATORIO_META.informacoesCapa, icone: ICONES_SECAO.informacoesCapa, campos: CAMPOS_INFORMACOES_CAPA },
   prazo: { ...SECOES_RELATORIO_META.prazo, icone: ICONES_SECAO.prazo },

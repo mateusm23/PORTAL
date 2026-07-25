@@ -28,7 +28,11 @@ import { salvarInformacoesCapa, replicarUltimoRelatorio, alternarFinalizarSecao 
 
 const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
-  voltarLink: { display: "inline-flex", alignItems: "center", gap: "4px", fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, marginBottom: "18px" },
+  voltarLink: {
+    display: "inline-flex", alignItems: "center", gap: "6px", fontSize: tokens.fontSizeBase300, fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2, cursor: "pointer", marginBottom: "18px",
+    ":hover": { color: tokens.colorBrandForeground1 },
+  },
   cartao: {
     backgroundColor: tokens.colorNeutralBackground1, borderRadius: tokens.borderRadiusXLarge, boxShadow: tokens.shadow8,
     border: `1px solid ${tokens.colorNeutralStroke2}`, padding: "24px 28px",
@@ -59,6 +63,7 @@ export default function SecaoRelatorioForm({
   infoCapaInicial,
   fotoUrl,
   camposAtivos,
+  camposSecaoAtivos,
 }: {
   obraId: string;
   obraNome: string;
@@ -74,6 +79,8 @@ export default function SecaoRelatorioForm({
   infoCapaInicial: InfoCapa;
   fotoUrl: string | null;
   camposAtivos: CampoAtivo[];
+  /** campos da SEÇÃO habilitados pelo admin (tela Configurações · Seções e Campos da Obra) */
+  camposSecaoAtivos: string[];
 }) {
   const classes = useStyles();
   const router = useRouter();
@@ -100,6 +107,12 @@ export default function SecaoRelatorioForm({
     const meta = CATALOGO_CAMPOS_GERAIS[c.campo_chave as keyof typeof CATALOGO_CAMPOS_GERAIS];
     return { chave: c.campo_chave, label: meta?.label ?? c.campo_chave, valor: c.valor ?? "", grupo: meta?.grupo ?? ("detalhes" as const) };
   });
+  // só os campos que o admin habilitou pra essa obra E que o engenheiro
+  // realmente preenche (nomeObra/fotoCapa/tipologia são "somenteLeitura" —
+  // aparecem só como toggle pro admin, nunca como input aqui)
+  const camposParaPreencher = Object.entries(secaoCatalogo.campos ?? {}).filter(
+    ([chave, meta]) => camposSecaoAtivos.includes(chave) && !meta.somenteLeitura,
+  );
 
   function mudarValor(chave: "clienteContratante" | "responsavelTecnico" | "registroProfissional", valor: string) {
     setValores((atual) => ({ ...atual, [chave]: valor }));
@@ -191,7 +204,7 @@ export default function SecaoRelatorioForm({
       />
 
       <Link href={`/painel/${obraId}/atualizar-informacoes`} className={classes.voltarLink}>
-        <ArrowLeft20Regular fontSize={14} /> Voltar
+        <ArrowLeft20Regular fontSize={18} /> Voltar
       </Link>
 
       <CabecalhoRelatorio obraNome={obraNome} subtitulo={secaoLabel} competencia={competenciaLabel} finalizado={finalizadoLocal} />
@@ -203,7 +216,7 @@ export default function SecaoRelatorioForm({
         finalizado={finalizadoLocal}
         onAlternarFinalizar={alternarFinalizar}
         onSalvar={salvar}
-        salvarDesabilitado={emConstrucao || salvando}
+        salvarDesabilitado={emConstrucao || camposParaPreencher.length === 0 || salvando}
         salvando={salvando || replicando || finalizando}
       />
 
@@ -212,26 +225,33 @@ export default function SecaoRelatorioForm({
           <div className={classes.emConstrucaoWrap}>
             {`"${secaoLabel}" ainda não foi desenhada — espaço reservado só pra mostrar a navegação entre seções.`}
           </div>
+        ) : camposParaPreencher.length === 0 ? (
+          <div className={classes.emConstrucaoWrap}>Nenhum campo habilitado pra essa obra ainda, nessa seção. Fale com o administrador.</div>
         ) : (
           <div className={classes.gradeCampos}>
-            {Object.entries(secaoCatalogo.campos ?? {}).map(([chave, meta]) => {
+            {camposParaPreencher.map(([chave, meta]) => {
               const Icone = meta.icone;
+              if (chave === "logotipoCliente") {
+                return (
+                  <Field key={chave} label={<span className={classes.labelCampo}><Icone fontSize={16} /> {meta.label}</span>}>
+                    <Button appearance="secondary" size="small" icon={<ArrowUpload20Regular />} disabled={enviandoLogo} onClick={() => inputLogoRef.current?.click()}>
+                      {enviandoLogo ? "Enviando..." : valores.logotipoUrl ? "Trocar logotipo" : "Enviar logotipo"}
+                    </Button>
+                  </Field>
+                );
+              }
+              const chaveValor = chave as "clienteContratante" | "responsavelTecnico" | "registroProfissional";
               return (
                 <Field key={chave} label={<span className={classes.labelCampo}><Icone fontSize={16} /> {meta.label}</span>}>
                   <Input
-                    value={valores[chave as "clienteContratante" | "responsavelTecnico" | "registroProfissional"]}
+                    value={valores[chaveValor]}
                     placeholder={`Digite ${meta.label.toLowerCase()}...`}
-                    onChange={(_e, data) => mudarValor(chave as "clienteContratante" | "responsavelTecnico" | "registroProfissional", data.value)}
+                    onChange={(_e, data) => mudarValor(chaveValor, data.value)}
                   />
                 </Field>
               );
             })}
-            <Field label={<span className={classes.labelCampo}>Logotipo do Cliente</span>}>
-              <Button appearance="secondary" size="small" icon={<ArrowUpload20Regular />} disabled={enviandoLogo} onClick={() => inputLogoRef.current?.click()}>
-                {enviandoLogo ? "Enviando..." : valores.logotipoUrl ? "Trocar logotipo" : "Enviar logotipo"}
-              </Button>
-              <input ref={inputLogoRef} type="file" accept="image/*" style={{ display: "none" }} onChange={aoEscolherLogo} />
-            </Field>
+            <input ref={inputLogoRef} type="file" accept="image/*" style={{ display: "none" }} onChange={aoEscolherLogo} />
           </div>
         )}
       </div>
