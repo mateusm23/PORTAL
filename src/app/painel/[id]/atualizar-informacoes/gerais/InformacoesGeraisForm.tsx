@@ -19,8 +19,9 @@ import {
 import { Location20Regular, CheckmarkCircle20Regular, ArrowUpload20Regular, ArrowLeft20Regular, Map20Regular } from "@fluentui/react-icons";
 import { createClient } from "@/lib/supabase/client";
 import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
-import { salvarFotoObra, salvarInformacoesGerais } from "./actions";
+import { salvarFotoObra, salvarInformacoesGerais } from "../actions";
 import MapaObra from "@/components/MapaObra";
+import CabecalhoRelatorio from "@/components/CabecalhoRelatorio";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; cidade: string | null; estado: string | null };
 type InfoFixa = { foto_url: string | null; endereco: string | null };
@@ -30,7 +31,6 @@ const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
   subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginTop: "4px" },
   voltarLink: { display: "inline-flex", alignItems: "center", gap: "4px", fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, marginBottom: "12px" },
-  tituloPagina: { fontSize: tokens.fontSizeBase500, fontWeight: tokens.fontWeightSemibold, color: tokens.colorNeutralForeground1, marginBottom: "4px" },
   cartao: {
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusXLarge,
@@ -59,7 +59,7 @@ const useStyles = makeStyles({
   semCampos: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, padding: "20px 0" },
 });
 
-export default function AtualizarInformacoesForm({
+export default function InformacoesGeraisForm({
   obra,
   infoFixaInicial,
   camposAtivosIniciais,
@@ -69,7 +69,7 @@ export default function AtualizarInformacoesForm({
   camposAtivosIniciais: CampoAtivo[];
 }) {
   const classes = useStyles();
-  const toasterId = useId("toaster-atualizar-info");
+  const toasterId = useId("toaster-informacoes-gerais");
   const { dispatchToast } = useToastController(toasterId);
   const inputArquivoRef = useRef<HTMLInputElement | null>(null);
 
@@ -164,17 +164,15 @@ export default function AtualizarInformacoesForm({
     <div className={classes.pagina}>
       <Toaster toasterId={toasterId} />
 
-      <Link href={`/painel/${obra.id}`} className={classes.voltarLink}>
-        <ArrowLeft20Regular fontSize={14} /> Voltar pra {obra.nome}
+      <Link href={`/painel/${obra.id}/atualizar-informacoes`} className={classes.voltarLink}>
+        <ArrowLeft20Regular fontSize={14} /> Voltar
       </Link>
 
-      <Text as="h1" className={classes.tituloPagina}>
-        Atualizar Informações
-      </Text>
+      <CabecalhoRelatorio obraNome={obra.nome} subtitulo="Informações Gerais" />
 
       <div className={classes.cartaoFixo}>
         <div className={classes.subtitulo} style={{ marginTop: 0, marginBottom: 16 }}>
-          Só aparecem aqui os campos que o admin habilitou pra essa obra.
+          Estático — não muda todo mês, sem pressa pra manter atualizado. Só aparecem aqui os campos que o admin habilitou pra essa obra.
         </div>
       </div>
 
@@ -242,7 +240,7 @@ export default function AtualizarInformacoesForm({
       </div>
 
       <div className={classes.cartao}>
-        <Text className={classes.secaoTitulo}>Seção: Informações Gerais</Text>
+        <Text className={classes.secaoTitulo}>Dados do Empreendimento</Text>
         <div className={classes.secaoDescricao}>{obra.cidade}/{obra.estado}</div>
 
         {camposAtivos.length === 0 ? (

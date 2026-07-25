@@ -15,16 +15,19 @@ import {
 // o valor de cada um é preenchido pelo engenheiro em Atualizar Informações.
 export type CampoChave = keyof typeof CATALOGO_CAMPOS_GERAIS;
 
+// "grupo" separa os campos em 2 blocos só na prévia do dashboard da capa
+// (DashboardCapaDialog) — "Detalhes do Projeto" vs "Dados de Área do
+// Projeto", mesma divisão usada na capa da Versão Atual (Power BI).
 export const CATALOGO_CAMPOS_GERAIS = {
-  construtora: { label: "Construtora", icone: Building20Regular },
-  incorporadora: { label: "Incorporadora", icone: Building20Regular },
-  fundoImobiliario: { label: "Fundo Imobiliário", icone: Building20Regular },
-  tipologia: { label: "Tipologia", icone: Home20Regular },
-  padrao: { label: "Padrão", icone: Star20Regular },
-  fase: { label: "Fase", icone: Flag20Regular },
-  unidades: { label: "Unidades", icone: PeopleTeam20Regular },
-  lotes: { label: "Lotes", icone: PeopleTeam20Regular },
-  areaConstruida: { label: "Área construída", icone: ResizeLarge20Regular },
-  areaTerreno: { label: "Área do terreno", icone: ResizeLarge20Regular },
-  areaPreservacao: { label: "Área de preservação", icone: ResizeLarge20Regular },
-} satisfies Record<string, { label: string; icone: FluentIcon }>;
+  construtora: { label: "Construtora", icone: Building20Regular, grupo: "detalhes" },
+  incorporadora: { label: "Incorporadora", icone: Building20Regular, grupo: "detalhes" },
+  fundoImobiliario: { label: "Fundo Imobiliário", icone: Building20Regular, grupo: "detalhes" },
+  tipologia: { label: "Tipologia", icone: Home20Regular, grupo: "detalhes" },
+  padrao: { label: "Padrão", icone: Star20Regular, grupo: "detalhes" },
+  fase: { label: "Fase", icone: Flag20Regular, grupo: "detalhes" },
+  unidades: { label: "Unidades", icone: PeopleTeam20Regular, grupo: "area" },
+  lotes: { label: "Lotes", icone: PeopleTeam20Regular, grupo: "area" },
+  areaConstruida: { label: "Área construída", icone: ResizeLarge20Regular, grupo: "area" },
+  areaTerreno: { label: "Área do terreno", icone: ResizeLarge20Regular, grupo: "area" },
+  areaPreservacao: { label: "Área de preservação", icone: ResizeLarge20Regular, grupo: "area" },
+} satisfies Record<string, { label: string; icone: FluentIcon; grupo: "detalhes" | "area" }>;

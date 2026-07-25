@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function ObraLayout({
+export default async function ObraHomeLayout({
   children,
   params,
 }: {
