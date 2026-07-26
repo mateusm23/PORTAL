@@ -77,7 +77,7 @@ export default function AtualizarInformacoesFlyout({
             );
           })}
           <div className="mt-2 px-2.5 text-[11px] leading-snug text-slate-400">
-            Fornecedores, Farol de Controle e as demais seções entram aqui conforme forem construídas.
+            Seções marcadas &quot;em construção&quot; aparecem na navegação mas ainda não têm formulário.
           </div>
         </>
       )}
