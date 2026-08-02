@@ -37,8 +37,11 @@ const useStyles = makeStyles({
   linhaPrincipal: {
     display: "grid",
     gridTemplateColumns: "320px 1fr",
-    gridTemplateAreas: '"foto dados"',
-    gap: "20px",
+    // mapa empilhado na mesma coluna da foto, logo abaixo dela -- antes vivia
+    // numa grade própria mais embaixo, e como o cartão "dados" ao lado é mais
+    // alto que a foto, sobrava um vão vazio antes do mapa começar.
+    gridTemplateAreas: '"foto dados" "mapa dados"',
+    gap: "12px 20px",
     marginTop: "24px",
   },
   heroImagem: {
@@ -76,16 +79,25 @@ const useStyles = makeStyles({
   iconTileValor: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground1, fontWeight: tokens.fontWeightMedium, display: "block" },
   semCampos: { fontSize: tokens.fontSizeBase200, color: tokens.colorNeutralForeground3, padding: "8px 0" },
 
-  linhaMapa: { marginTop: "20px", display: "grid", gridTemplateColumns: "320px 1fr", gap: "20px" },
   mapaCard: {
+    gridArea: "mapa",
     borderRadius: tokens.borderRadiusXLarge,
     overflow: "hidden",
     boxShadow: tokens.shadow8,
     border: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralBackground1,
     height: "220px",
+    // padding própria (não é só estética): sem essa folga, o cartão de
+    // localização que o próprio embed do Google desenha (ícone + "Abrir no
+    // Maps") nasce colado no canto do iframe e o arredondamento deste
+    // cartão (overflow:hidden) corta a ponta dele -- por isso ele aparecia
+    // "quebrado em dois pedaços" (ícone cortado e o link solto embaixo).
+    padding: "8px",
+    boxSizing: "border-box",
     position: "relative",
   },
   mapaVazio: {
+    gridArea: "mapa",
     height: "220px", borderRadius: tokens.borderRadiusXLarge, border: `1px dashed ${tokens.colorNeutralStroke2}`,
     display: "flex", alignItems: "center", justifyContent: "center", fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground3, textAlign: "center", padding: "0 16px",
@@ -211,9 +223,7 @@ export default function ObraHome({
             </div>
           )}
         </div>
-      </div>
 
-      <div className={classes.linhaMapa}>
         {temLocalizacao ? (
           <div className={classes.mapaCard}>
             <MapaObra endereco={enderecoCompleto} />
@@ -221,7 +231,6 @@ export default function ObraHome({
         ) : (
           <div className={classes.mapaVazio}>Sem endereço cadastrado ainda.</div>
         )}
-        <div />
       </div>
     </div>
   );
