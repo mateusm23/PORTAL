@@ -16,7 +16,7 @@ import {
   useToastController,
   useId,
 } from "@fluentui/react-components";
-import { ArrowLeft20Regular, ArrowUpload20Regular } from "@fluentui/react-icons";
+import { ArrowLeft20Regular, ArrowUpload20Regular, LockClosed20Regular } from "@fluentui/react-icons";
 import CabecalhoRelatorio from "@/components/CabecalhoRelatorio";
 import ToolbarSecaoRelatorio from "@/components/ToolbarSecaoRelatorio";
 import DashboardCapaDialog from "@/components/DashboardCapaDialog";
@@ -24,7 +24,7 @@ import { createClient } from "@/lib/supabase/client";
 import { SECOES_RELATORIO, type SecaoChave } from "@/lib/relatorioSecoesCatalogo";
 import { CATALOGO_CAMPOS_GERAIS } from "@/lib/obraCampoCatalogo";
 import { formatarCompetencia } from "@/lib/competencia";
-import { salvarInformacoesCapa, replicarUltimoRelatorio, alternarFinalizarSecao } from "../../actions";
+import { salvarInformacoesCapa, replicarUltimoRelatorio, alternarFinalizarSecao } from "../../../actions";
 
 const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
@@ -43,6 +43,11 @@ const useStyles = makeStyles({
     padding: "40px 20px", textAlign: "center", color: tokens.colorNeutralForeground3, fontSize: tokens.fontSizeBase300,
     border: `1px dashed ${tokens.colorNeutralStroke2}`, borderRadius: tokens.borderRadiusLarge,
   },
+  avisoTravado: {
+    display: "flex", alignItems: "center", gap: "8px", padding: "10px 16px", marginBottom: "16px",
+    borderRadius: tokens.borderRadiusLarge, backgroundColor: tokens.colorNeutralBackground3,
+    color: tokens.colorNeutralForeground2, fontSize: tokens.fontSizeBase300,
+  },
 });
 
 type CampoAtivo = { campo_chave: string; valor: string | null };
@@ -59,6 +64,7 @@ export default function SecaoRelatorioForm({
   emConstrucao,
   relatorioId,
   competencia,
+  travado,
   finalizado,
   infoCapaInicial,
   fotoUrl,
@@ -75,6 +81,8 @@ export default function SecaoRelatorioForm({
   emConstrucao: boolean;
   relatorioId: string;
   competencia: string;
+  /** relatório já travado como histórico — formulário fica só leitura */
+  travado: boolean;
   finalizado: boolean;
   infoCapaInicial: InfoCapa;
   fotoUrl: string | null;
@@ -209,6 +217,13 @@ export default function SecaoRelatorioForm({
 
       <CabecalhoRelatorio obraNome={obraNome} subtitulo={secaoLabel} competencia={competenciaLabel} finalizado={finalizadoLocal} />
 
+      {travado && (
+        <div className={classes.avisoTravado}>
+          <LockClosed20Regular fontSize={16} />
+          Este relatório está travado como histórico — só leitura. Um admin pode reabrir em Histórico, na tela de início.
+        </div>
+      )}
+
       <ToolbarSecaoRelatorio
         temReplicar={temReplicar && !emConstrucao}
         onReplicar={replicar}
@@ -218,6 +233,7 @@ export default function SecaoRelatorioForm({
         onSalvar={salvar}
         salvarDesabilitado={emConstrucao || camposParaPreencher.length === 0 || salvando}
         salvando={salvando || replicando || finalizando}
+        travado={travado}
       />
 
       <div className={classes.cartao}>
@@ -234,7 +250,7 @@ export default function SecaoRelatorioForm({
               if (chave === "logotipoCliente") {
                 return (
                   <Field key={chave} label={<span className={classes.labelCampo}><Icone fontSize={16} /> {meta.label}</span>}>
-                    <Button appearance="secondary" size="small" icon={<ArrowUpload20Regular />} disabled={enviandoLogo} onClick={() => inputLogoRef.current?.click()}>
+                    <Button appearance="secondary" size="small" icon={<ArrowUpload20Regular />} disabled={enviandoLogo || travado} onClick={() => inputLogoRef.current?.click()}>
                       {enviandoLogo ? "Enviando..." : valores.logotipoUrl ? "Trocar logotipo" : "Enviar logotipo"}
                     </Button>
                   </Field>
@@ -247,6 +263,7 @@ export default function SecaoRelatorioForm({
                     value={valores[chaveValor]}
                     placeholder={`Digite ${meta.label.toLowerCase()}...`}
                     onChange={(_e, data) => mudarValor(chaveValor, data.value)}
+                    disabled={travado}
                   />
                 </Field>
               );

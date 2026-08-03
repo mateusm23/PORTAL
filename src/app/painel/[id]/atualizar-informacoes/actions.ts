@@ -82,28 +82,15 @@ async function marcarSecaoEditada(supabase: SupabaseServidor, relatorioId: strin
   }
 }
 
-export async function criarNovoRelatorio(obraId: string) {
+// competenciaIso escolhida pelo usuário (seletor de mês/ano na tela de
+// início) -- antes era calculada sozinha (mês atual, ou último+1), o que
+// impedia lançar o primeiro relatório num mês diferente do corrente ou
+// voltar depois pra preencher um mês que ficou pra trás (obra parada).
+export async function criarNovoRelatorio(obraId: string, competenciaIso: string) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { data: ultimo } = await supabase
-    .from("relatorio_mensal")
-    .select("competencia")
-    .eq("obra_id", obraId)
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const hoje = new Date();
-  const proximaCompetencia = ultimo
-    ? new Date(ultimo.competencia)
-    : new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-  if (ultimo) {
-    proximaCompetencia.setMonth(proximaCompetencia.getMonth() + 1);
-  }
-  const competenciaIso = proximaCompetencia.toISOString().slice(0, 10);
 
   const { data: relatorio, error } = await supabase
     .from("relatorio_mensal")
@@ -112,12 +99,58 @@ export async function criarNovoRelatorio(obraId: string) {
     .single();
 
   if (error) {
-    return { erro: error.message };
+    // 23505 = unique_violation -- já existe relatorio_mensal(obra_id, competencia)
+    const erro = error.code === "23505" ? "Já existe um relatório pra esse mês nessa obra." : error.message;
+    return { erro, relatorioId: null };
   }
 
   await supabase
     .from("relatorio_secao_status")
     .insert({ relatorio_id: relatorio.id, secao_chave: "informacoesCapa" });
+
+  revalidatePath(`/painel/${obraId}/atualizar-informacoes`, "layout");
+  return { erro: null, relatorioId: relatorio.id as string };
+}
+
+// fecha o mês: qualquer usuário vinculado à obra pode travar um relatório
+// aberto como histórico (RLS "usuario fecha relatorio que acompanha" em
+// 009_relatorio_trava.sql garante que só destravado -> travado é permitido).
+export async function fecharRelatorio(obraId: string, relatorioId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("relatorio_mensal")
+    .update({ travado_em: new Date().toISOString(), travado_por: user?.id })
+    .eq("id", relatorioId);
+
+  if (error) {
+    return { erro: error.message };
+  }
+
+  revalidatePath(`/painel/${obraId}/atualizar-informacoes`, "layout");
+  return { erro: null };
+}
+
+// reabre um relatório travado -- só admin (RLS "admin reabre relatorio" é
+// quem garante isso de verdade; a tela só mostra o botão pra admin, mas a
+// trava real é no banco).
+export async function reabrirRelatorio(obraId: string, relatorioId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("relatorio_mensal")
+    .update({ travado_em: null, reaberto_em: new Date().toISOString(), reaberto_por: user?.id })
+    .eq("id", relatorioId);
+
+  if (error) {
+    return { erro: error.message };
+  }
 
   revalidatePath(`/painel/${obraId}/atualizar-informacoes`, "layout");
   return { erro: null };
@@ -160,14 +193,27 @@ export async function replicarUltimoRelatorio(obraId: string, relatorioId: strin
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: anterior } = await supabase
+  // relatório sendo editado agora pode ser retroativo (backfill de um mês
+  // que ficou pra trás) -- "replicar do último" precisa buscar o relatório
+  // cronologicamente ANTERIOR a este, não só "qualquer outro mais recente"
+  // (senão poderia trazer dado de um mês futuro em relação ao que se está
+  // preenchendo).
+  const { data: esteRelatorio } = await supabase
     .from("relatorio_mensal")
-    .select("id")
-    .eq("obra_id", obraId)
-    .neq("id", relatorioId)
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .select("competencia")
+    .eq("id", relatorioId)
+    .single();
+
+  const { data: anterior } = esteRelatorio
+    ? await supabase
+        .from("relatorio_mensal")
+        .select("id")
+        .eq("obra_id", obraId)
+        .lt("competencia", esteRelatorio.competencia)
+        .order("competencia", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
 
   if (!anterior) {
     return { erro: "Não existe relatório anterior pra replicar." };

@@ -13,14 +13,21 @@ type StatusSecao = { finalizado: boolean; editado: boolean };
 // acesso a Informações Gerais (e vice-versa). Ver CONTEXTO_PROJETO.md.
 export default function AtualizarInformacoesFlyout({
   obraId,
-  statusPorSecao,
+  statusPorRelatorio,
 }: {
   obraId: string;
-  statusPorSecao: Partial<Record<SecaoChave, StatusSecao>>;
+  /** status de seções de cada relatório em andamento, indexado por relatorioId — pode haver mais de um aberto ao mesmo tempo */
+  statusPorRelatorio: Record<string, Partial<Record<SecaoChave, StatusSecao>>>;
 }) {
   const pathname = usePathname();
   const emSecao = pathname.includes("/atualizar-informacoes/relatorio/");
-  const secaoAtivaChave = emSecao ? pathname.split("/relatorio/")[1]?.split("/")[0] : null;
+  // URL é .../relatorio/{relatorioId}/{secao} — o relatorioId ativo vem do
+  // próprio pathname, não precisa vir como prop (evita layout aninhado só
+  // pra saber "qual dos relatórios abertos é esse").
+  const partesAposRelatorio = emSecao ? pathname.split("/relatorio/")[1]?.split("/") : undefined;
+  const relatorioIdAtivo = partesAposRelatorio?.[0] ?? null;
+  const secaoAtivaChave = partesAposRelatorio?.[1] ?? null;
+  const statusPorSecao = relatorioIdAtivo ? statusPorRelatorio[relatorioIdAtivo] ?? {} : {};
   const emGerais = pathname.endsWith("/atualizar-informacoes/gerais");
 
   return (
@@ -56,7 +63,7 @@ export default function AtualizarInformacoesFlyout({
             return (
               <Link
                 key={chave}
-                href={`/painel/${obraId}/atualizar-informacoes/relatorio/${chave}`}
+                href={`/painel/${obraId}/atualizar-informacoes/relatorio/${relatorioIdAtivo}/${chave}`}
                 className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13.5px] ${
                   ativo ? "bg-blue-50 font-medium text-blue-700" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                 }`}

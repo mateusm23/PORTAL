@@ -35,6 +35,7 @@ export default function ToolbarSecaoRelatorio({
   onSalvar,
   salvarDesabilitado,
   salvando,
+  travado,
 }: {
   temReplicar: boolean;
   onReplicar: () => void;
@@ -44,13 +45,15 @@ export default function ToolbarSecaoRelatorio({
   onSalvar: () => void;
   salvarDesabilitado?: boolean;
   salvando?: boolean;
+  /** relatório já travado como histórico — só Visualizar continua liberado */
+  travado?: boolean;
 }) {
   const classes = useStyles();
 
   return (
     <div className={classes.toolbar}>
       {temReplicar && (
-        <Button className={classes.botaoReplicar} size="large" icon={<ArrowSync20Regular />} onClick={onReplicar}>
+        <Button className={classes.botaoReplicar} size="large" icon={<ArrowSync20Regular />} onClick={onReplicar} disabled={travado}>
           Replicar dados do último relatório
         </Button>
       )}
@@ -62,10 +65,11 @@ export default function ToolbarSecaoRelatorio({
         size="large"
         icon={finalizado ? <ArrowSync20Regular /> : <CheckmarkCircle20Regular />}
         onClick={onAlternarFinalizar}
+        disabled={travado}
       >
         {finalizado ? "Reabrir seção" : "Finalizar seção"}
       </Button>
-      <Button appearance="primary" size="large" icon={<CheckmarkCircle20Regular />} onClick={onSalvar} disabled={salvarDesabilitado}>
+      <Button appearance="primary" size="large" icon={<CheckmarkCircle20Regular />} onClick={onSalvar} disabled={salvarDesabilitado || travado}>
         {salvando ? "Salvando..." : "Salvar"}
       </Button>
     </div>

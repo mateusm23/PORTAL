@@ -19,30 +19,32 @@ export default async function AtualizarInformacoesLayout({
     notFound();
   }
 
-  // relatório mais recente da obra — é o único editável (os outros já são
-  // histórico). Usado só pra alimentar os indicadores de status na sidebar.
-  const { data: relatorioAtual } = await supabase
+  // pode haver mais de um relatório aberto ao mesmo tempo (mês atual +
+  // algum retroativo) -- a sidebar entra num deles conforme o relatorioId
+  // que já está na própria URL (ver AtualizarInformacoesFlyout), então aqui
+  // só monta um mapa com o status de seções de CADA relatório em andamento.
+  const { data: relatoriosEmAndamento } = await supabase
     .from("relatorio_mensal")
     .select("id")
     .eq("obra_id", id)
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .is("travado_em", null);
 
-  const statusPorSecao: Partial<Record<SecaoChave, { finalizado: boolean; editado: boolean }>> = {};
-  if (relatorioAtual) {
+  const statusPorRelatorio: Record<string, Partial<Record<SecaoChave, { finalizado: boolean; editado: boolean }>>> = {};
+  for (const relatorio of relatoriosEmAndamento ?? []) {
     const { data: status } = await supabase
       .from("relatorio_secao_status")
       .select("secao_chave, finalizado, primeira_edicao_em")
-      .eq("relatorio_id", relatorioAtual.id);
+      .eq("relatorio_id", relatorio.id);
 
+    const statusPorSecao: Partial<Record<SecaoChave, { finalizado: boolean; editado: boolean }>> = {};
     for (const s of status ?? []) {
       statusPorSecao[s.secao_chave as SecaoChave] = { finalizado: s.finalizado, editado: s.primeira_edicao_em !== null };
     }
+    statusPorRelatorio[relatorio.id] = statusPorSecao;
   }
 
   return (
-    <AppShell titulo={obra.nome} secaoAtiva="obras" flyout={<AtualizarInformacoesFlyout obraId={id} statusPorSecao={statusPorSecao} />}>
+    <AppShell titulo={obra.nome} secaoAtiva="obras" flyout={<AtualizarInformacoesFlyout obraId={id} statusPorRelatorio={statusPorRelatorio} />}>
       {children}
     </AppShell>
   );
