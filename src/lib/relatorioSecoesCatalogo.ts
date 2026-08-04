@@ -19,7 +19,7 @@ import {
 import { SECOES_RELATORIO_META, type SecaoChave, type SecaoMeta } from "./relatorioSecoesMeta";
 
 // catálogo das seções (= "frentes de atuação", ver relatorioSecoesMeta.ts) do
-// RELATÓRIO MENSAL, com ícones — só pra uso em Client Components (a versão
+// RELATÓRIO MENSAL, com ícones -- só pra uso em Client Components (a versão
 // sem ícones, server-safe, é relatorioSecoesMeta.ts). Cresce aos poucos: só
 // "Informações da Capa" tem campos de verdade até agora; as demais entram
 // como "emConstrucao" até serem desenhadas uma a uma (ver dados-obras/ pro
@@ -42,7 +42,7 @@ const ICONES_SECAO: Record<SecaoChave, FluentIcon> = {
 
 // nomeObra/fotoCapa/tipologia são "somenteLeitura": o admin ainda liga/desliga
 // se entram na capa (controla a tela de Configurações · Seções e Campos da
-// Obra), mas o engenheiro nunca digita o valor deles aqui — o valor vem de
+// Obra), mas o engenheiro nunca digita o valor deles aqui -- o valor vem de
 // outro lugar (cadastro da obra, Foto e Localização, Informações Gerais).
 const CAMPOS_INFORMACOES_CAPA = {
   nomeObra: { label: "Nome da obra", icone: BuildingMultiple20Regular, somenteLeitura: true },

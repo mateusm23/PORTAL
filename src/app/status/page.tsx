@@ -75,7 +75,7 @@ export default function StatusPage() {
             Andamento do projeto
           </h1>
           <p className="mt-4 max-w-xl text-base text-slate-600 dark:text-slate-400">
-            Página interna de acompanhamento — não faz parte do fluxo
+            Página interna de acompanhamento. Não faz parte do fluxo
             que a equipe usa no dia a dia.
           </p>
         </section>
@@ -103,7 +103,7 @@ export default function StatusPage() {
       </main>
 
       <footer className="mx-auto w-full max-w-5xl px-6 py-8 text-xs text-slate-400 dark:text-slate-600">
-        Projeto pessoal — Mateus Monteiro
+        Projeto pessoal · Mateus Monteiro
       </footer>
     </div>
   );

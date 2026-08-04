@@ -14,7 +14,7 @@ import {
 import CapaRelatorioPdf from "./CapaRelatorioPdf";
 
 // casca fina: só a moldura de modal (título, botão fechar). O visual da capa
-// em si mora em CapaRelatorioPdf.tsx, separado de propósito — reaproveitado
+// em si mora em CapaRelatorioPdf.tsx, separado de propósito -- reaproveitado
 // também na exportação real de PDF (Playwright) mais pra frente, sem
 // duplicar o desenho da capa em dois lugares. Nunca pode ter barra de
 // rolagem (representa a imagem exata que vira PDF): flex/overflow:hidden,

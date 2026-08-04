@@ -81,7 +81,7 @@ export default function SecaoRelatorioForm({
   emConstrucao: boolean;
   relatorioId: string;
   competencia: string;
-  /** relatório já travado como histórico — formulário fica só leitura */
+  /** relatório já travado como histórico -- formulário fica só leitura */
   travado: boolean;
   finalizado: boolean;
   infoCapaInicial: InfoCapa;
@@ -116,7 +116,7 @@ export default function SecaoRelatorioForm({
     return { chave: c.campo_chave, label: meta?.label ?? c.campo_chave, valor: c.valor ?? "", grupo: meta?.grupo ?? ("detalhes" as const) };
   });
   // só os campos que o admin habilitou pra essa obra E que o engenheiro
-  // realmente preenche (nomeObra/fotoCapa/tipologia são "somenteLeitura" —
+  // realmente preenche (nomeObra/fotoCapa/tipologia são "somenteLeitura" --
   // aparecem só como toggle pro admin, nunca como input aqui)
   const camposParaPreencher = Object.entries(secaoCatalogo.campos ?? {}).filter(
     ([chave, meta]) => camposSecaoAtivos.includes(chave) && !meta.somenteLeitura,
@@ -144,7 +144,7 @@ export default function SecaoRelatorioForm({
 
     const { data } = supabase.storage.from("obras").getPublicUrl(caminho);
     setValores((atual) => ({ ...atual, logotipoUrl: `${data.publicUrl}?v=${Date.now()}` }));
-    dispatchToast(<Toast><ToastTitle>Logotipo selecionado — clique em Salvar pra confirmar.</ToastTitle></Toast>, { intent: "success" });
+    dispatchToast(<Toast><ToastTitle>Logotipo selecionado. Clique em Salvar pra confirmar.</ToastTitle></Toast>, { intent: "success" });
   }
 
   async function salvar() {
@@ -153,7 +153,7 @@ export default function SecaoRelatorioForm({
     setSalvando(false);
 
     if (resultado.erro) {
-      dispatchToast(<Toast><ToastTitle>Não foi possível salvar. Nada foi alterado — tente de novo.</ToastTitle><ToastBody>{resultado.erro}</ToastBody></Toast>, { intent: "error" });
+      dispatchToast(<Toast><ToastTitle>Não foi possível salvar. Nada foi alterado. Tente de novo.</ToastTitle><ToastBody>{resultado.erro}</ToastBody></Toast>, { intent: "error" });
       return;
     }
     dispatchToast(<Toast><ToastTitle>{secaoLabel} salva com sucesso.</ToastTitle></Toast>, { intent: "success" });
@@ -220,7 +220,7 @@ export default function SecaoRelatorioForm({
       {travado && (
         <div className={classes.avisoTravado}>
           <LockClosed20Regular fontSize={16} />
-          Este relatório está travado como histórico — só leitura. Um admin pode reabrir em Histórico, na tela de início.
+          Este relatório está travado como histórico, só leitura. Um admin pode reabrir em Histórico, na tela de início.
         </div>
       )}
 
@@ -239,7 +239,7 @@ export default function SecaoRelatorioForm({
       <div className={classes.cartao}>
         {emConstrucao ? (
           <div className={classes.emConstrucaoWrap}>
-            {`"${secaoLabel}" ainda não foi desenhada — espaço reservado só pra mostrar a navegação entre seções.`}
+            {`"${secaoLabel}" ainda não foi desenhada. Espaço reservado só pra mostrar a navegação entre seções.`}
           </div>
         ) : camposParaPreencher.length === 0 ? (
           <div className={classes.emConstrucaoWrap}>Nenhum campo habilitado pra essa obra ainda, nessa seção. Fale com o administrador.</div>

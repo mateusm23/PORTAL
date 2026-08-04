@@ -211,7 +211,7 @@ export default function ObraHome({
                     </div>
                     <div>
                       <span className={classes.iconTileLabel}>{meta.label}</span>
-                      <span className={classes.iconTileValor}>{c.valor || "—"}</span>
+                      <span className={classes.iconTileValor}>{c.valor || "-"}</span>
                     </div>
                   </div>
                 );

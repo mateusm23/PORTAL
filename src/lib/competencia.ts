@@ -9,7 +9,7 @@ export function formatarCompetencia(competenciaIso: string) {
   return `${MESES[mes - 1]}/${ano}`;
 }
 
-// pro seletor de mês/ano na tela de início do Relatório Mensal — a
+// pro seletor de mês/ano na tela de início do Relatório Mensal -- a
 // competência escolhida pelo usuário vira sempre dia 1 do mês.
 export function competenciaIsoDeAnoMes(ano: number, mes1a12: number) {
   return `${ano}-${String(mes1a12).padStart(2, "0")}-01`;

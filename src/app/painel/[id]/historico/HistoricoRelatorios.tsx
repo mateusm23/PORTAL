@@ -175,7 +175,7 @@ function PainelRelatorio({
     <div className={classes.painelMini}>
       <div className={classes.painelHeader}>
         <span className={classes.painelTitulo}>{competenciaLabel}</span>
-        {!aberto && <CheckmarkCircle20Filled fontSize={18} style={{ color: COR_VERDE }} title="Travado (histórico) — finalizado" />}
+        {!aberto && <CheckmarkCircle20Filled fontSize={18} style={{ color: COR_VERDE }} title="Travado (histórico), finalizado" />}
       </div>
       <div className={classes.painelMeta}>{aberto ? "Em andamento" : "Travado (histórico)"}</div>
       {!aberto && relatorio.travadoEm && (
@@ -295,7 +295,7 @@ function CardRelatorioGrade({
 
   return (
     <div className={`${classes.cardGrade} ${aberto ? classes.cardGradeAberto : classes.cardGradeTravado}`}>
-      {!aberto && <CheckmarkCircle20Filled className={classes.seloFinalizado} title="Relatório travado (histórico) — finalizado" />}
+      {!aberto && <CheckmarkCircle20Filled className={classes.seloFinalizado} title="Relatório travado (histórico), finalizado" />}
       <div className={classes.cardGradeCompetencia}>{competenciaLabel}</div>
       {aberto && <Badge appearance="tint" color="warning" style={{ marginTop: "8px", alignSelf: "flex-start" }}>Em andamento</Badge>}
       {!aberto && relatorio.travadoEm && (
@@ -506,7 +506,7 @@ export default function HistoricoRelatorios({
             </DialogTitle>
             <DialogContent>
               {dialogFechar &&
-                `Isso vai travar os dados de ${MESES[Number(dialogFechar.competencia.slice(5, 7)) - 1]}/${dialogFechar.competencia.slice(0, 4)} como histórico — não será mais editável depois. Deseja continuar?`}
+                `Isso vai travar os dados de ${MESES[Number(dialogFechar.competencia.slice(5, 7)) - 1]}/${dialogFechar.competencia.slice(0, 4)} como histórico, não será mais editável depois. Deseja continuar?`}
             </DialogContent>
             <DialogActions>
               <Button appearance="secondary" onClick={() => setDialogFechar(null)}>Cancelar</Button>

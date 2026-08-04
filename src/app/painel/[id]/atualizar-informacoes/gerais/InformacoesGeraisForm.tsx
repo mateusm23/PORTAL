@@ -148,7 +148,7 @@ export default function InformacoesGeraisForm({
     if (resultado.erro) {
       dispatchToast(
         <Toast>
-          <ToastTitle>Não foi possível salvar. Nada foi alterado — tente de novo.</ToastTitle>
+          <ToastTitle>Não foi possível salvar. Nada foi alterado. Tente de novo.</ToastTitle>
           <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
@@ -176,13 +176,13 @@ export default function InformacoesGeraisForm({
 
       <div className={classes.cartaoFixo}>
         <div className={classes.subtitulo} style={{ marginTop: 0, marginBottom: 16 }}>
-          Estático — não muda todo mês, sem pressa pra manter atualizado. Só aparecem aqui os campos que o admin habilitou pra essa obra.
+          Estático, não muda todo mês, sem pressa pra manter atualizado. Só aparecem aqui os campos que o admin habilitou pra essa obra.
         </div>
       </div>
 
       <div className={`${classes.cartao} ${classes.cartaoFixo}`}>
         <Text className={classes.secaoTitulo}>Foto e Localização</Text>
-        <div className={classes.secaoDescricao}>Sempre presentes, em qualquer obra — não fazem parte do catálogo configurável.</div>
+        <div className={classes.secaoDescricao}>Sempre presentes, em qualquer obra. Não fazem parte do catálogo configurável.</div>
         <div className={classes.linhaFixos}>
           <div className={classes.fotoQuadro}>
             {!fotoUrl && <span className={classes.fotoLegenda}>Sem foto ainda</span>}
@@ -210,7 +210,7 @@ export default function InformacoesGeraisForm({
                 <Location20Regular fontSize={16} /> Endereço (usado no mapa da Home)
               </span>
             }
-            hint={`Só a rua e o número — cidade/UF (${obra.cidade}/${obra.estado}) já vem do cadastro da obra.`}
+            hint={`Só a rua e o número, cidade/UF (${obra.cidade}/${obra.estado}) já vem do cadastro da obra.`}
           >
             <div style={{ display: "flex", gap: 8 }}>
               <Input

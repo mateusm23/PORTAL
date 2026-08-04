@@ -30,14 +30,14 @@ type Obra = { id: string; nome: string; tipo: string; escopo: string; cidade: st
 type CampoAtivo = { obra_id: string; campo_chave: string };
 type CampoSecaoAtivo = { obra_id: string; secao_chave: string; campo_chave: string };
 
-// catálogo combinado: "Informações Gerais" (estático, sem mês — obraCampoCatalogo.ts)
+// catálogo combinado: "Informações Gerais" (estático, sem mês -- obraCampoCatalogo.ts)
 // + as seções do relatório mensal que já têm campos de verdade (só
 // "Informações da Capa" até agora; Prazo/Financeiro entram aqui quando
-// forem desenhados). Pro admin é tudo igual — só liga/desliga.
+// forem desenhados). Pro admin é tudo igual -- só liga/desliga.
 const CATALOGO_SECOES = {
   informacoesGerais: { label: "Informações Gerais", campos: CATALOGO_CAMPOS_GERAIS as Record<string, { label: string; icone: (typeof CATALOGO_CAMPOS_GERAIS)[keyof typeof CATALOGO_CAMPOS_GERAIS]["icone"] }> },
   // "Informações da Capa" é a única seção do relatório com campos de verdade
-  // até agora — sempre presente (por isso sem spread condicional, que deixaria
+  // até agora -- sempre presente (por isso sem spread condicional, que deixaria
   // o tipo de CATALOGO_SECOES["informacoesCapa"] como "possivelmente undefined").
   informacoesCapa: {
     label: SECOES_RELATORIO.informacoesCapa.label,
@@ -167,7 +167,7 @@ export default function CamposObraPainel({
     if (resultado.erro) {
       dispatchToast(
         <Toast>
-          <ToastTitle>Não foi possível atualizar o campo agora. Nada foi alterado — tente de novo.</ToastTitle>
+          <ToastTitle>Não foi possível atualizar o campo agora. Nada foi alterado. Tente de novo.</ToastTitle>
           <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
@@ -202,7 +202,7 @@ export default function CamposObraPainel({
       <div className={classes.tituloWrap}>
         <h1 className={classes.titulo}>Seções e Campos da Obra</h1>
         <div className={classes.subtitulo}>
-          Só admin vê essa tela — decide quais campos cada obra mostra, seção por seção. O engenheiro nunca vê essa configuração, só o resultado dela.
+          Só admin vê essa tela: decide quais campos cada obra mostra, seção por seção. O engenheiro nunca vê essa configuração, só o resultado dela.
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export default function CamposObraPainel({
             <ShieldLock20Regular style={{ verticalAlign: "middle", marginRight: 6 }} />
             Área restrita ao administrador
           </MessageBarTitle>
-          Isso aqui só define ESTRUTURA (quais campos existem pra essa obra, em cada seção) — nenhum valor é digitado nesta tela. Quem preenche
+          Isso aqui só define ESTRUTURA (quais campos existem pra essa obra, em cada seção); nenhum valor é digitado nesta tela. Quem preenche
           o valor é o engenheiro, na tela &quot;Atualizar Informações&quot;.
         </MessageBarBody>
       </MessageBar>

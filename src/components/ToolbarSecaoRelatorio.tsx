@@ -3,7 +3,7 @@
 import { makeStyles, tokens, Button } from "@fluentui/react-components";
 import { ArrowSync20Regular, Eye20Regular, CheckmarkCircle20Regular } from "@fluentui/react-icons";
 
-// barra de ações padrão de toda seção do relatório mensal — mesmos 4 botões
+// barra de ações padrão de toda seção do relatório mensal -- mesmos 4 botões
 // em toda seção nova que for construída (Replicar/Visualizar/Finalizar/
 // Salvar), cores sólidas fortes validadas em preview antes de virar código.
 const useStyles = makeStyles({
@@ -45,7 +45,7 @@ export default function ToolbarSecaoRelatorio({
   onSalvar: () => void;
   salvarDesabilitado?: boolean;
   salvando?: boolean;
-  /** relatório já travado como histórico — só Visualizar continua liberado */
+  /** relatório já travado como histórico -- só Visualizar continua liberado */
   travado?: boolean;
 }) {
   const classes = useStyles();

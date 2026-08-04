@@ -30,7 +30,7 @@ export async function salvarInformacoesGerais(obraId: string, endereco: string, 
   }
 
   // update, não upsert: o engenheiro só pode alterar o valor de campos que o
-  // admin já habilitou (inseriu) antes — nunca cria linha nova aqui.
+  // admin já habilitou (inseriu) antes -- nunca cria linha nova aqui.
   const resultados = await Promise.all(
     Object.entries(valores).map(([campoChave, valor]) =>
       supabase
@@ -58,7 +58,7 @@ type SupabaseServidor = Awaited<ReturnType<typeof createClient>>;
 
 // registra que uma seção foi tocada neste relatório: cria a linha de status
 // na primeira vez (carimbando primeira_edicao_em) ou só atualiza
-// ultima_edicao_em nas vezes seguintes — sem isso, editar duas vezes
+// ultima_edicao_em nas vezes seguintes -- sem isso, editar duas vezes
 // resetaria a "primeira edição" e quebraria a análise de gargalo futura.
 async function marcarSecaoEditada(supabase: SupabaseServidor, relatorioId: string, secaoChave: string, usuarioId: string | undefined) {
   const agora = new Date().toISOString();

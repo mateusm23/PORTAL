@@ -1,19 +1,19 @@
-// Versão "server-safe" do catálogo de seções — sem nenhum import de
+// Versão "server-safe" do catálogo de seções -- sem nenhum import de
 // @fluentui/react-icons. Server Components (page.tsx/layout.tsx) importam
 // daqui; a versão com ícones (relatorioSecoesCatalogo.ts, "use client" only
 // por transitividade) importa este arquivo por baixo pra não duplicar
 // label/temReplicar/emConstrucao. Descoberto na prática: importar um ícone
 // de @fluentui/react-icons dentro de um Server Component quebra o build
-// ("Attempted to call __styles() from the server") — por isso a separação.
+// ("Attempted to call __styles() from the server") -- por isso a separação.
 //
 // Nomenclatura "seção" aqui = "frente de atuação" (termo fechado com o Mateus
 // em 2026-07-26, mapeando os 13 .pbix/.xlsx reais em `dados-obras/`): cada
 // entrada é preenchida uma vez por competência pelo engenheiro. Quantas
-// páginas isso vira no PDF final é outra coisa (ver `paginas` abaixo) — uma
+// páginas isso vira no PDF final é outra coisa (ver `paginas` abaixo) -- uma
 // frente pode virar mais de uma página só por espaço, sem mudar o dado.
 
 // mesmos 3 valores de obra.escopo (fonte de rótulo: webapp/src/lib/obraCatalogo.ts,
-// ESCOPO_LABEL) — repetido aqui como union literal só pra poder tipar
+// ESCOPO_LABEL) -- repetido aqui como union literal só pra poder tipar
 // "aplicaAoEscopo" abaixo.
 export type Escopo = "construcao" | "gerenciamento" | "administracao";
 
@@ -37,10 +37,10 @@ export type SecaoMeta = {
   temReplicar: boolean;
   emConstrucao: boolean;
   /** undefined = vale pra obra de qualquer escopo. Só marcar quando tiver evidência real
-   * (ver dados-obras/catalogo-outras-abas.json) — por enquanto só Auditoria de
+   * (ver dados-obras/catalogo-outras-abas.json) -- por enquanto só Auditoria de
    * Empreiteiros tem essa evidência (apareceu em 6 das 13 obras reais). */
   aplicaAoEscopo?: Escopo[];
-  /** como essa frente se divide em páginas no PDF final — só layout/espaço,
+  /** como essa frente se divide em páginas no PDF final -- só layout/espaço,
    * não é dado novo. Toda frente tem pelo menos 1. */
   paginas: PaginaRelatorio[];
 };

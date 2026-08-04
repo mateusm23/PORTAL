@@ -378,7 +378,7 @@ export default function AcessosPainel({
     return usuarios.filter((u) => temAcesso(u.id, obraId)).length;
   }
 
-  // switch controlado pelo estado real (nunca muda antes do servidor confirmar) —
+  // switch controlado pelo estado real (nunca muda antes do servidor confirmar) --
   // se a chamada falhar, a tela não fica dessincronizada do banco
   async function alternar(usuarioId: string, obraId: string, novoValor: boolean) {
     const k = chave(usuarioId, obraId);
@@ -393,7 +393,7 @@ export default function AcessosPainel({
     if (resultado.erro) {
       dispatchToast(
         <Toast>
-          <ToastTitle>Não foi possível atualizar o acesso agora. Nada foi alterado — tente de novo.</ToastTitle>
+          <ToastTitle>Não foi possível atualizar o acesso agora. Nada foi alterado. Tente de novo.</ToastTitle>
           <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
@@ -421,7 +421,7 @@ export default function AcessosPainel({
     );
   }
 
-  // promove/rebaixa administrador — nunca deixa mexer no próprio usuário logado,
+  // promove/rebaixa administrador -- nunca deixa mexer no próprio usuário logado,
   // pra evitar alguém se rebaixar por engano e ficar sem acesso à própria tela
   async function alternarAdmin(usuarioId: string, novoValor: boolean) {
     if (usuarioId === usuarioLogadoId) return;
@@ -459,7 +459,7 @@ export default function AcessosPainel({
     );
   }
 
-  // ação em massa: uma única chamada — ou aplica tudo, ou nada muda
+  // ação em massa: uma única chamada -- ou aplica tudo, ou nada muda
   async function alternarEmMassa(idsVariaveis: string[], conceder: boolean) {
     if (idsVariaveis.length === 0) return;
     setPendenteEmMassa(true);
@@ -472,7 +472,7 @@ export default function AcessosPainel({
     if (resultado.erro) {
       dispatchToast(
         <Toast>
-          <ToastTitle>Falha ao aplicar em massa — nenhum acesso foi alterado.</ToastTitle>
+          <ToastTitle>Falha ao aplicar em massa. Nenhum acesso foi alterado.</ToastTitle>
           <ToastBody>{resultado.erro}</ToastBody>
         </Toast>,
         { intent: "error" },
@@ -506,7 +506,7 @@ export default function AcessosPainel({
   }, [buscaEsquerda, usuarios]);
 
   // a lista de obras só aparece num painel por vez (esquerda no modo "obra",
-  // direita no modo "usuario") — os filtros de Tipo/Escopo/Status são os mesmos
+  // direita no modo "usuario") -- os filtros de Tipo/Escopo/Status são os mesmos
   // nos dois casos, só muda qual busca de texto vale em cada momento
   function buscaAtivaObras() {
     return modo === "obra" ? buscaEsquerda : buscaDireita;

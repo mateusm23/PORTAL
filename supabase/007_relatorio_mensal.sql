@@ -1,11 +1,11 @@
   -- Relatório Mensal: separado de Informações Gerais (que é estático e já
   -- vive em obra_campo_ativo/obra_info_fixa, ver 006_campos_obra.sql). Aqui é
   -- dinâmico, por competência (mês/ano), com cada seção finalizando por conta
-  -- própria — não existe um "finalizar" único pro relatório inteiro.
+  -- própria: não existe um "finalizar" único pro relatório inteiro.
   -- Rodar no SQL Editor do Supabase (projeto GESTAO-GERENCIADORA).
 
   -- relatorio_mensal: a "casca" do relatório de uma obra num mês. Sem coluna
-  -- de estado — o relatório mais recente de cada obra é o único editável
+  -- de estado, o relatório mais recente de cada obra é o único editável
   -- (comparado por competencia); os anteriores viram histórico automaticamente
   -- assim que um novo é criado. Não tem update nem delete de propósito.
   create table public.relatorio_mensal (
@@ -40,7 +40,7 @@
 
   -- relatorio_secao_status: progresso de cada seção do relatório (finalizada
   -- ou não) + timestamps pra futura análise de gargalo (qual seção demora
-  -- mais). "editado" não é coluna — é derivado no código como
+  -- mais). "editado" não é coluna, é derivado no código como
   -- `primeira_edicao_em !== null`. secao_chave é validado no código contra
   -- src/lib/relatorioSecoesCatalogo.ts, sem enum no banco, mesmo motivo de
   -- obra_campo_ativo.campo_chave (crescer sem precisar de migration nova).
@@ -138,7 +138,7 @@
     ));
 
   -- logotipo do cliente reaproveita o bucket "obras" já existente, caminho
-  -- {obra_id}/relatorios/{competencia}/logotipo-cliente.<ext> — como o
+  -- {obra_id}/relatorios/{competencia}/logotipo-cliente.<ext>, como o
   -- primeiro segmento do caminho continua sendo {obra_id}, as políticas de
   -- storage já criadas em 006_campos_obra.sql ("usuario envia/substitui foto
   -- da obra que acompanha") já cobrem esse caso, sem precisar de política nova.

@@ -1,10 +1,10 @@
 -- Tela admin do preview 11 (Configurações · Seções e Campos da Obra):
 -- estende o padrão de obra_campo_ativo (006_campos_obra.sql) pras seções do
--- RELATÓRIO MENSAL — admin decide quais campos existem por obra, em cada
+-- RELATÓRIO MENSAL: admin decide quais campos existem por obra, em cada
 -- seção (Informações Gerais continua em obra_campo_ativo, sem mudança).
 --
 -- Diferença chave: aqui não tem "valor" nenhum, é só existência (liga/desliga)
--- — o valor de verdade mora em relatorio_informacoes_capa, por competência.
+-- o valor de verdade mora em relatorio_informacoes_capa, por competência.
 -- Rodar no SQL Editor do Supabase (projeto GESTAO-GERENCIADORA).
 
 create table public.obra_secao_campo_ativo (

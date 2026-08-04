@@ -36,7 +36,7 @@ export async function desabilitarCampo(obraId: string, campoChave: CampoChave) {
 }
 
 // ---------- campos das seções do Relatório Mensal (obra_secao_campo_ativo) ----------
-// mesmo padrão acima, mas sem "valor" — é só existência (liga/desliga); o
+// mesmo padrão acima, mas sem "valor" -- é só existência (liga/desliga); o
 // valor de verdade mora em relatorio_informacoes_capa, por competência.
 
 export async function habilitarCampoSecao(obraId: string, secaoChave: string, campoChave: string) {

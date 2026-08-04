@@ -3,7 +3,7 @@
 -- Rodar no SQL Editor do Supabase (projeto GESTAO-GERENCIADORA).
 
 -- Corrige lacuna real descoberta ao construir esta tela: obra.select só
--- permitia "usuario ve obras que acompanha" (via obra_usuario) — sem uma
+-- permitia "usuario ve obras que acompanha" (via obra_usuario), sem uma
 -- política admin-wide, o próprio Mateus não conseguiria ENXERGAR uma obra
 -- nova criada por ele mesmo (criarObra não vincula o criador via
 -- obra_usuario). Mesma classe de bug já corrigido antes em obra_usuario
@@ -15,7 +15,7 @@ create policy "admin ve todas as obras"
 -- obra_campo_ativo: o admin decide QUAIS campos existem pra cada obra
 -- (insert/delete); o engenheiro (qualquer usuário vinculado à obra) só
 -- atualiza o VALOR (update). campo_chave é validado no código, contra
--- o catálogo em src/lib/obraCampoCatalogo.ts — não é um enum no banco
+-- o catálogo em src/lib/obraCampoCatalogo.ts, não é um enum no banco
 -- de propósito, pra crescer sem precisar de migration a cada campo novo.
 create table if not exists public.obra_campo_ativo (
   obra_id uuid not null references public.obra(id) on delete cascade,
@@ -53,7 +53,7 @@ create policy "admin ve todos os campos ativos"
   on public.obra_campo_ativo for select
   using (public.is_admin());
 
--- obra_info_fixa: foto + endereço — sempre presentes, fora do catálogo
+-- obra_info_fixa: foto + endereço, sempre presentes, fora do catálogo
 -- configurável. Separado da tabela obra (cuja escrita é admin-only) porque
 -- aqui quem escreve é o engenheiro vinculado à obra, não só o admin.
 create table if not exists public.obra_info_fixa (
@@ -90,7 +90,7 @@ create policy "admin ve toda info fixa"
   on public.obra_info_fixa for select
   using (public.is_admin());
 
--- bucket de fotos de obra — público pra leitura (são só fotos de fachada/
+-- bucket de fotos de obra, público pra leitura -- são só fotos de fachada/
 -- capa, não é dado sensível), escrita restrita a quem acompanha a obra.
 -- Convenção de caminho: {obra_id}/capa.<ext>
 insert into storage.buckets (id, name, public)

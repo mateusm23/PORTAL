@@ -43,7 +43,7 @@ export default function EsqueciSenhaPage() {
             Esqueci minha senha
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Digite seu email — mandamos um link pra você criar uma
+            Digite seu email. Mandamos um link pra você criar uma
             senha nova.
           </p>
 

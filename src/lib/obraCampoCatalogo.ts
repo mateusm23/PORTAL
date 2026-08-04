@@ -12,7 +12,7 @@ import { CAMPOS_GERAIS_INFO, type CampoChave } from "./obraCampoCatalogoInfo";
 export type { CampoChave };
 
 // "grupo" separa os campos em 2 blocos só na prévia do dashboard da capa
-// (DashboardCapaDialog) — "Detalhes do Projeto" vs "Dados de Área do
+// (DashboardCapaDialog) -- "Detalhes do Projeto" vs "Dados de Área do
 // Projeto", mesma divisão usada na capa da Versão Atual (Power BI).
 //
 // Ícone empresta em cima do dado puro (obraCampoCatalogoInfo.ts) -- esse

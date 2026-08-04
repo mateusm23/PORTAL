@@ -2,15 +2,15 @@
 
 import { makeStyles, tokens, Text } from "@fluentui/react-components";
 
-// Visual puro da Capa do Relatório Mensal — validado em preview/16 (várias
+// Visual puro da Capa do Relatório Mensal -- validado em preview/16 (várias
 // rodadas, incluindo teste real de impressão em PDF via Chrome headless).
 // Separado do DashboardCapaDialog.tsx de propósito: esse componente não sabe
-// nada sobre "estar dentro de um modal" — ele é só o conteúdo, pra poder ser
+// nada sobre "estar dentro de um modal" -- ele é só o conteúdo, pra poder ser
 // reaproveitado tanto no modal "Visualizar" quanto na exportação real de PDF
 // (Playwright) mais pra frente, sem duplicar o visual em dois lugares.
 //
 // Cores exatas das medidas DAX do Power BI original (ver dados-obras/ e
-// CONTEXTO_PROJETO.md) — não são uma paleta nova, é a correção de um desvio
+// CONTEXTO_PROJETO.md) -- não são uma paleta nova, é a correção de um desvio
 // que já existia no app antes desta rodada.
 const AZUL_PROFUNDO = "#003366";
 const AZUL_FAIXA = "#002244";
@@ -18,7 +18,7 @@ const AZUL_DESTAQUE = "#005599";
 const AZUL_TILE = "#002B55";
 const CINZA_RESUMO = "#E6E6E6";
 
-// Prazo e Financeiro ainda não foram construídos — estes números são só
+// Prazo e Financeiro ainda não foram construídos -- estes números são só
 // ilustrativos, mesmo formato da capa da Versão Atual (Power BI).
 const RESUMO_EXECUTIVO_ILUSTRATIVO = {
   orcamento: "R$ 40.863.521,40",
@@ -139,7 +139,7 @@ function LinhaCampo({
   return (
     <div className={classes.linha} style={estilo}>
       <span className={classes.linhaLabel}>{label}:</span>
-      <span className={`${classes.linhaValor} ${vazio ? classes.linhaValorVazio : ""}`}>{vazio ? "—" : valor}</span>
+      <span className={`${classes.linhaValor} ${vazio ? classes.linhaValorVazio : ""}`}>{vazio ? "-" : valor}</span>
     </div>
   );
 }
@@ -245,8 +245,8 @@ export default function CapaRelatorioPdf({
 
           {temRodape && (
             <div className={classes.rodape}>
-              <span>Cliente: {clienteContratante || "—"}</span>
-              <span>Responsável: {responsavelTecnico || "—"}{registroProfissional ? ` · ${registroProfissional}` : ""}</span>
+              <span>Cliente: {clienteContratante || "-"}</span>
+              <span>Responsável: {responsavelTecnico || "-"}{registroProfissional ? ` · ${registroProfissional}` : ""}</span>
               {logotipoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logotipoUrl} alt="Logotipo do cliente" style={{ maxHeight: 22, maxWidth: 100 }} />

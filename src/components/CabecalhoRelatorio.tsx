@@ -3,11 +3,11 @@
 import { makeStyles, tokens, Badge } from "@fluentui/react-components";
 
 // cabeçalho padrão de toda tela dentro de "Atualizar Informações" (início,
-// Informações Gerais, seções do relatório) — validado em vários rounds de
+// Informações Gerais, seções do relatório) -- validado em vários rounds de
 // preview antes de virar código (ver CONTEXTO_PROJETO.md). Título é sempre o
 // nome da obra; o subtítulo diz qual tela é essa. A régua bicolor (grosso
 // petróleo + fino cinza) e a cor petróleo do badge de competência reaproveitam
-// o mesmo acento já usado em ObrasGrid.tsx — não é uma paleta nova.
+// o mesmo acento já usado em ObrasGrid.tsx -- não é uma paleta nova.
 const useStyles = makeStyles({
   cabecalho: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "20px", paddingBottom: "6px" },
   titulo: { fontSize: "30px", fontWeight: 700, color: "#0f172a", margin: 0, lineHeight: 1.2 },
@@ -33,7 +33,7 @@ export default function CabecalhoRelatorio({
   subtitulo: string;
   /** só passa quando a tela tem um mês associado (seções do relatório e a tela de início) */
   competencia?: string;
-  /** só passa dentro de uma seção do relatório — controla o badge "Finalizada"/"Em preenchimento" */
+  /** só passa dentro de uma seção do relatório -- controla o badge "Finalizada"/"Em preenchimento" */
   finalizado?: boolean;
 }) {
   const classes = useStyles();

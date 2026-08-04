@@ -177,7 +177,7 @@ export default function InicioRelatorioMensal({
 
   function gerarPdf() {
     dispatchToast(
-      <Toast><ToastTitle>Geração de PDF entra numa etapa futura — libera exatamente daqui quando todas as seções estiverem finalizadas.</ToastTitle></Toast>,
+      <Toast><ToastTitle>Geração de PDF entra numa etapa futura. Libera exatamente daqui quando todas as seções estiverem finalizadas.</ToastTitle></Toast>,
       { intent: "info" },
     );
   }
@@ -194,7 +194,7 @@ export default function InicioRelatorioMensal({
         <div className={classes.subtitulo}>
           {emAndamento.length > 0
             ? "Continue de onde parou, ou feche o mês pra travar os dados como histórico."
-            : "Essa obra ainda não tem nenhum relatório mensal — lance o primeiro pra começar a preencher."}
+            : "Essa obra ainda não tem nenhum relatório mensal. Lance o primeiro pra começar a preencher."}
         </div>
 
         <div className={classes.tituloSecao}>Relatórios em andamento</div>
@@ -246,7 +246,7 @@ export default function InicioRelatorioMensal({
               <div className={`${classes.iconeWrap} ${classes.iconeCinza}`}><DocumentAdd20Regular fontSize={20} /></div>
               <div>
                 <div className={classes.linhaTitulo}>Criar relatório de outro mês</div>
-                <div className={classes.linhaDescricao}>Escolha o mês — inclusive pra lançar um mês que ficou pra trás.</div>
+                <div className={classes.linhaDescricao}>Escolha o mês, inclusive pra lançar um mês que ficou pra trás.</div>
               </div>
             </div>
           </DialogTrigger>
@@ -255,7 +255,7 @@ export default function InicioRelatorioMensal({
               <DialogTitle>Criar relatório</DialogTitle>
               <DialogContent>
                 <Text block style={{ marginBottom: 14 }}>
-                  Escolha a competência (mês/ano) desse relatório. Não precisa ser o mês seguinte ao último — dá pra
+                  Escolha a competência (mês/ano) desse relatório. Não precisa ser o mês seguinte ao último, dá pra
                   voltar e preencher um mês que ficou pra trás.
                 </Text>
                 <div className={classes.seletorMesAno}>
@@ -339,7 +339,7 @@ export default function InicioRelatorioMensal({
             </DialogTitle>
             <DialogContent>
               {relatorioFechando &&
-                `Isso vai travar os dados de ${formatarCompetencia(relatorioFechando.competencia)} como histórico — não será mais editável (só um admin pode reabrir depois). Deseja continuar?`}
+                `Isso vai travar os dados de ${formatarCompetencia(relatorioFechando.competencia)} como histórico, não será mais editável (só um admin pode reabrir depois). Deseja continuar?`}
             </DialogContent>
             <DialogActions>
               <Button appearance="secondary" onClick={() => setRelatorioFechando(null)}>Cancelar</Button>

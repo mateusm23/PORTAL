@@ -8,7 +8,7 @@ import { SECOES_RELATORIO, type SecaoChave } from "@/lib/relatorioSecoesCatalogo
 
 type StatusSecao = { finalizado: boolean; editado: boolean };
 
-// "Informações Gerais" e as seções do relatório são contextos separados —
+// "Informações Gerais" e as seções do relatório são contextos separados --
 // nunca aparecem juntos aqui: dentro de uma seção do relatório, some o
 // acesso a Informações Gerais (e vice-versa). Ver CONTEXTO_PROJETO.md.
 export default function AtualizarInformacoesFlyout({
@@ -16,12 +16,12 @@ export default function AtualizarInformacoesFlyout({
   statusPorRelatorio,
 }: {
   obraId: string;
-  /** status de seções de cada relatório em andamento, indexado por relatorioId — pode haver mais de um aberto ao mesmo tempo */
+  /** status de seções de cada relatório em andamento, indexado por relatorioId -- pode haver mais de um aberto ao mesmo tempo */
   statusPorRelatorio: Record<string, Partial<Record<SecaoChave, StatusSecao>>>;
 }) {
   const pathname = usePathname();
   const emSecao = pathname.includes("/atualizar-informacoes/relatorio/");
-  // URL é .../relatorio/{relatorioId}/{secao} — o relatorioId ativo vem do
+  // URL é .../relatorio/{relatorioId}/{secao} -- o relatorioId ativo vem do
   // próprio pathname, não precisa vir como prop (evita layout aninhado só
   // pra saber "qual dos relatórios abertos é esse").
   const partesAposRelatorio = emSecao ? pathname.split("/relatorio/")[1]?.split("/") : undefined;
