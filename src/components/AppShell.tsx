@@ -57,7 +57,8 @@ export default async function AppShell({
   flyout,
 }: {
   children: React.ReactNode;
-  titulo: string;
+  /** algumas telas (ex: Histórico de Relatórios) já têm o próprio título de conteúdo (CabecalhoRelatorio) e não precisam deste também */
+  titulo?: string;
   subtitulo?: string;
   secaoAtiva: (typeof NAV)[number]["chave"];
   flyout?: React.ReactNode;
@@ -124,9 +125,9 @@ export default async function AppShell({
       )}
 
       <main className="relative flex-1 overflow-y-auto p-7">
-        <h1 className="text-lg font-semibold text-slate-900">{titulo}</h1>
+        {titulo && <h1 className="text-lg font-semibold text-slate-900">{titulo}</h1>}
         {subtitulo && <p className="mt-1 text-sm text-slate-500">{subtitulo}</p>}
-        <div className="mt-6">{children}</div>
+        <div className={titulo ? "mt-6" : undefined}>{children}</div>
       </main>
     </div>
   );

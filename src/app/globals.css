@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* anel pulsante do "mês atual" no cordão do Histórico de Relatórios
+   (HistoricoRelatorios.tsx) -- keyframes não rodam bem via Griffel
+   (makeStyles), então fica aqui como CSS global de verdade. */
+@keyframes pulso-anel {
+  0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(2, 132, 199, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+.pulso-mes-atual {
+  animation: pulso-anel 2.2s infinite;
+}

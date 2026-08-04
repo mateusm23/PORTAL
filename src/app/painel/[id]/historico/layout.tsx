@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function ObraHomeLayout({
+export default async function HistoricoLayout({
   children,
   params,
 }: {
@@ -13,14 +13,13 @@ export default async function ObraHomeLayout({
   const supabase = await createClient();
 
   const { data: obra } = await supabase.from("obra").select("id").eq("id", id).single();
-
   if (!obra) {
     notFound();
   }
 
-  // sem "titulo" de propósito -- ObraHome.tsx já mostra o nome da obra em
-  // destaque (CabecalhoRelatorio), duplicava com o <h1> que o AppShell
-  // mostraria aqui em cima.
+  // sem "titulo" de propósito -- HistoricoRelatorios.tsx já tem o próprio
+  // título (CabecalhoRelatorio, nome da obra em destaque), duplicava com o
+  // <h1> que o AppShell mostraria aqui em cima.
   return (
     <AppShell secaoAtiva="obras">
       {children}

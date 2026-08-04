@@ -200,7 +200,7 @@ export default function CamposObraPainel({
       <Toaster toasterId={toasterId} />
 
       <div className={classes.tituloWrap}>
-        <h1 className={classes.titulo}>Configurações · Seções e Campos da Obra</h1>
+        <h1 className={classes.titulo}>Seções e Campos da Obra</h1>
         <div className={classes.subtitulo}>
           Só admin vê essa tela — decide quais campos cada obra mostra, seção por seção. O engenheiro nunca vê essa configuração, só o resultado dela.
         </div>

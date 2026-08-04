@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   makeStyles,
@@ -24,6 +25,7 @@ import {
   Field,
 } from "@fluentui/react-components";
 import {
+  ArrowLeft20Regular,
   DocumentAdd20Regular,
   DocumentPdf20Regular,
   CheckmarkCircle20Filled,
@@ -39,6 +41,11 @@ import { criarNovoRelatorio, fecharRelatorio, reabrirRelatorio } from "./actions
 
 const useStyles = makeStyles({
   pagina: { maxWidth: "900px", margin: "0 auto" },
+  voltarLink: {
+    display: "inline-flex", alignItems: "center", gap: "6px", fontSize: tokens.fontSizeBase300, fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2, cursor: "pointer", marginBottom: "18px",
+    ":hover": { color: tokens.colorBrandForeground1 },
+  },
   wrap: { display: "flex", flexDirection: "column", padding: "32px 20px 20px", maxWidth: "720px", margin: "0 auto" },
   tituloSecao: { fontSize: tokens.fontSizeBase400, fontWeight: tokens.fontWeightSemibold, color: tokens.colorNeutralForeground1, marginTop: "28px", marginBottom: "10px" },
   subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginBottom: "6px" },
@@ -178,6 +185,9 @@ export default function InicioRelatorioMensal({
   return (
     <div className={classes.pagina}>
       <Toaster toasterId={toasterId} />
+      <Link href={`/painel/${obraId}`} className={classes.voltarLink}>
+        <ArrowLeft20Regular fontSize={18} /> Voltar
+      </Link>
       <CabecalhoRelatorio obraNome={obraNome} subtitulo="Relatório Mensal" competencia={competenciaLabelUnica} />
 
       <div className={classes.wrap}>

@@ -14,7 +14,7 @@ export default async function AtualizarInformacoesLayout({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: obra } = await supabase.from("obra").select("nome").eq("id", id).single();
+  const { data: obra } = await supabase.from("obra").select("id").eq("id", id).single();
   if (!obra) {
     notFound();
   }
@@ -43,8 +43,11 @@ export default async function AtualizarInformacoesLayout({
     statusPorRelatorio[relatorio.id] = statusPorSecao;
   }
 
+  // sem "titulo" de propósito -- as 3 telas que vivem aqui embaixo (início,
+  // Informações Gerais, seção do relatório) já têm CabecalhoRelatorio com o
+  // nome da obra em destaque; duplicava com o <h1> que o AppShell mostraria.
   return (
-    <AppShell titulo={obra.nome} secaoAtiva="obras" flyout={<AtualizarInformacoesFlyout obraId={id} statusPorRelatorio={statusPorRelatorio} />}>
+    <AppShell secaoAtiva="obras" flyout={<AtualizarInformacoesFlyout obraId={id} statusPorRelatorio={statusPorRelatorio} />}>
       {children}
     </AppShell>
   );

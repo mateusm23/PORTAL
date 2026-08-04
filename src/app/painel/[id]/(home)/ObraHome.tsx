@@ -11,6 +11,7 @@ import {
 } from "@fluentui/react-icons";
 import { TIPO_LABEL, ESCOPO_LABEL, STATUS_LABEL, TIPO_COR, ESCOPO_COR, STATUS_COR } from "@/lib/obraCatalogo";
 import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo";
+import CabecalhoRelatorio from "@/components/CabecalhoRelatorio";
 import MapaObra from "@/components/MapaObra";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; status: string; cidade: string | null; estado: string | null };
@@ -18,8 +19,7 @@ type InfoFixa = { foto_url: string | null; endereco: string | null };
 type CampoAtivo = { campo_chave: string; valor: string | null };
 
 const useStyles = makeStyles({
-  badgesLinha: { display: "flex", gap: "6px", marginTop: "8px" },
-  subtitulo: { fontSize: tokens.fontSizeBase300, color: tokens.colorNeutralForeground3, marginTop: "4px" },
+  badgesLinha: { display: "flex", gap: "6px", marginTop: "4px" },
 
   linhaAcessoRapidoTopo: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginTop: "20px" },
   cartaoAcessoRapido: {
@@ -115,28 +115,23 @@ export default function ObraHome({
 }) {
   const classes = useStyles();
   const cidadeEstado = obra.cidade && obra.estado ? `${obra.cidade} - ${obra.estado}` : null;
+  const cidadeEstadoLabel = obra.cidade && obra.estado ? `${obra.cidade}/${obra.estado}` : obra.cidade || obra.estado || "";
   const enderecoCompleto = [infoFixa.endereco, cidadeEstado, "Brasil"].filter(Boolean).join(", ");
   const temLocalizacao = Boolean(infoFixa.endereco || cidadeEstado);
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-        <div>
-          <div className={classes.subtitulo} style={{ marginTop: 0 }}>
-            {obra.cidade}/{obra.estado}
-          </div>
-          <div className={classes.badgesLinha}>
-            <Badge appearance="tint" color={TIPO_COR[obra.tipo]} shape="rounded">
-              {TIPO_LABEL[obra.tipo] ?? obra.tipo}
-            </Badge>
-            <Badge appearance="tint" color={ESCOPO_COR[obra.escopo]} shape="rounded">
-              {ESCOPO_LABEL[obra.escopo] ?? obra.escopo}
-            </Badge>
-            <Badge appearance="tint" color={STATUS_COR[obra.status]} shape="rounded">
-              {STATUS_LABEL[obra.status] ?? obra.status}
-            </Badge>
-          </div>
-        </div>
+      <CabecalhoRelatorio obraNome={obra.nome} subtitulo={cidadeEstadoLabel} />
+      <div className={classes.badgesLinha}>
+        <Badge appearance="tint" color={TIPO_COR[obra.tipo]} shape="rounded">
+          {TIPO_LABEL[obra.tipo] ?? obra.tipo}
+        </Badge>
+        <Badge appearance="tint" color={ESCOPO_COR[obra.escopo]} shape="rounded">
+          {ESCOPO_LABEL[obra.escopo] ?? obra.escopo}
+        </Badge>
+        <Badge appearance="tint" color={STATUS_COR[obra.status]} shape="rounded">
+          {STATUS_LABEL[obra.status] ?? obra.status}
+        </Badge>
       </div>
 
       <div className={classes.linhaAcessoRapidoTopo}>
@@ -150,15 +145,16 @@ export default function ObraHome({
           </div>
         </div>
 
-        <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
+        <Link href={`/painel/${obra.id}/historico`} className={classes.cartaoAcessoRapido}>
           <div className={classes.iconTileIconeWrap}>
             <DocumentBulletList20Regular fontSize={18} />
           </div>
           <div style={{ flex: 1 }}>
             <Text weight="medium" size={300} block>Histórico de Relatórios</Text>
-            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Em breve</Text>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Relatórios anteriores e em andamento</Text>
           </div>
-        </div>
+          <ChevronRight20Regular style={{ color: tokens.colorNeutralForeground3 }} />
+        </Link>
 
         <Link href={`/painel/${obra.id}/atualizar-informacoes`} className={classes.cartaoAcessoRapido}>
           <div className={classes.iconTileIconeWrap}>
