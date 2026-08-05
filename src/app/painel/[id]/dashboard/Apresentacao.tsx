@@ -43,7 +43,7 @@ import {
   ImageAdd20Regular,
 } from "@fluentui/react-icons";
 import CapaRelatorioPdf from "@/components/CapaRelatorioPdf";
-import { SECOES_RELATORIO_META } from "@/lib/relatorioSecoesMeta";
+import { TELAS, buscarTela, type Tela } from "@/lib/telasRelatorio";
 import { createClient } from "@/lib/supabase/client";
 import { registrarAcao } from "./actions";
 
@@ -63,20 +63,6 @@ export type DadosCapa = {
 };
 
 export type Acao = { id: string; telaChave: string; texto: string; imagemUrl: string | null };
-
-type Tela = { chave: string; frente: string; label: string; real: boolean };
-
-// achata `paginas` de cada frente do catálogo real numa lista só -- uma tela
-// por página do relatório final, sempre em sincronia com relatorioSecoesMeta.ts
-// (se uma frente ganhar/perder página, a apresentação acompanha sozinha).
-const TELAS: Tela[] = Object.entries(SECOES_RELATORIO_META).flatMap(([secaoChave, meta]) =>
-  meta.paginas.map((p) => ({
-    chave: p.chave,
-    frente: meta.label,
-    label: p.label,
-    real: secaoChave === "informacoesCapa",
-  })),
-);
 
 const PRESETS_ZOOM = [50, 75, 100, 125, 150, 200, 300];
 const AZUL_ACAO = "#2563eb"; // mesmo azul de "ação principal" já usado em HistoricoRelatorios.tsx
@@ -926,7 +912,7 @@ export default function Apresentacao({
                     ) : (
                       <div className={classes.listaAcoes}>
                         {[...acoes].reverse().map((a) => {
-                          const telaDaAcao = TELAS.find((t) => t.chave === a.telaChave);
+                          const telaDaAcao = buscarTela(a.telaChave);
                           return (
                             <div key={a.id} className={classes.itemAcao}>
                               <div className={classes.itemAcaoTela}>

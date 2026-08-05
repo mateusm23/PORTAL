@@ -182,15 +182,28 @@ export default function ObraHome({
           <ChevronRight20Regular style={{ color: tokens.colorNeutralForeground3 }} />
         </Link>
 
-        <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
-          <div className={classes.iconTileIconeWrap}>
-            <TaskListLtr20Regular fontSize={18} />
+        {temRelatorio ? (
+          <Link href={`/painel/${obra.id}/acoes`} className={classes.cartaoAcessoRapido}>
+            <div className={classes.iconTileIconeWrap}>
+              <TaskListLtr20Regular fontSize={18} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Text weight="medium" size={300} block>Ações</Text>
+              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Revisar apontamentos da apresentação</Text>
+            </div>
+            <ChevronRight20Regular style={{ color: tokens.colorNeutralForeground3 }} />
+          </Link>
+        ) : (
+          <div className={classes.cartaoAcessoRapido} style={{ cursor: "default" }}>
+            <div className={classes.iconTileIconeWrap}>
+              <TaskListLtr20Regular fontSize={18} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Text weight="medium" size={300} block>Ações</Text>
+              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Disponível após o primeiro relatório mensal</Text>
+            </div>
           </div>
-          <div style={{ flex: 1 }}>
-            <Text weight="medium" size={300} block>Ações</Text>
-            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>Em breve</Text>
-          </div>
-        </div>
+        )}
       </div>
 
       <div className={classes.linhaPrincipal}>
