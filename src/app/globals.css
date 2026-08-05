@@ -36,3 +36,13 @@ body {
 .pulso-mes-atual {
   animation: pulso-anel 2.2s infinite;
 }
+
+/* modo "Apresentação" (Apresentacao.tsx, /painel/[id]/dashboard): a raiz já
+   é position:fixed;inset:0 (mesma técnica de AppShell.tsx), então só falta
+   zerar o border-radius quando o navegador entra em tela cheia de verdade
+   (Fullscreen API) -- senão sobra canto arredondado encostado na borda da
+   tela. Escopado pela classe, não afeta nenhuma outra página. */
+.palco-raiz:fullscreen,
+.palco-raiz:-webkit-full-screen {
+  border-radius: 0 !important;
+}

@@ -22,6 +22,7 @@ import { CATALOGO_CAMPOS_GERAIS, type CampoChave } from "@/lib/obraCampoCatalogo
 import { salvarFotoObra, salvarInformacoesGerais } from "../actions";
 import MapaObra from "@/components/MapaObra";
 import CabecalhoRelatorio from "@/components/CabecalhoRelatorio";
+import RecorteFotoObra from "@/components/RecorteFotoObra";
 
 type Obra = { id: string; nome: string; tipo: string; escopo: string; cidade: string | null; estado: string | null };
 type InfoFixa = { foto_url: string | null; endereco: string | null };
@@ -85,20 +86,31 @@ export default function InformacoesGeraisForm({
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [mostrarMapa, setMostrarMapa] = useState(false);
+  const [arquivoParaCortar, setArquivoParaCortar] = useState<File | null>(null);
+  const [cropAberto, setCropAberto] = useState(false);
 
   const camposAtivos = camposAtivosIniciais.map((c) => c.campo_chave as CampoChave);
 
-  async function aoEscolherArquivo(evento: React.ChangeEvent<HTMLInputElement>) {
+  // só escolhe o arquivo aqui -- quem faz upload de verdade é
+  // aoConfirmarRecorte, depois que a pessoa ajusta o enquadramento no
+  // RecorteFotoObra (o antigo fluxo subia o arquivo original direto, sem
+  // ajuste, e cortava errado dependendo da proporção da foto -- ver
+  // preview/20-cortar-foto-obra.html).
+  function aoEscolherArquivo(evento: React.ChangeEvent<HTMLInputElement>) {
     const arquivo = evento.target.files?.[0];
     evento.target.value = "";
     if (!arquivo) return;
+    setArquivoParaCortar(arquivo);
+    setCropAberto(true);
+  }
 
+  async function aoConfirmarRecorte(blob: Blob) {
     setEnviandoFoto(true);
     const supabase = createClient();
     const caminho = `${obra.id}/capa`;
     const { error: erroUpload } = await supabase.storage
       .from("obras")
-      .upload(caminho, arquivo, { upsert: true, contentType: arquivo.type });
+      .upload(caminho, blob, { upsert: true, contentType: "image/jpeg" });
 
     if (erroUpload) {
       setEnviandoFoto(false);
@@ -129,6 +141,8 @@ export default function InformacoesGeraisForm({
     }
 
     setFotoUrl(urlComVersao);
+    setCropAberto(false);
+    setArquivoParaCortar(null);
     dispatchToast(
       <Toast>
         <ToastTitle>Foto atualizada com sucesso.</ToastTitle>
@@ -167,6 +181,14 @@ export default function InformacoesGeraisForm({
   return (
     <div className={classes.pagina}>
       <Toaster toasterId={toasterId} />
+
+      <RecorteFotoObra
+        open={cropAberto}
+        onOpenChange={(aberto) => { setCropAberto(aberto); if (!aberto) setArquivoParaCortar(null); }}
+        arquivo={arquivoParaCortar}
+        enviando={enviandoFoto}
+        onConfirmar={aoConfirmarRecorte}
+      />
 
       <Link href={`/painel/${obra.id}/atualizar-informacoes`} className={classes.voltarLink}>
         <ArrowLeft20Regular fontSize={18} /> Voltar
